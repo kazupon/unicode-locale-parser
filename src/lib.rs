@@ -1,14 +1,52 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
+pub use self::errors::ParserError;
+
+pub mod errors;
+
+#[derive(Debug)]
+pub struct UnicodeLanguageId {
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#[derive(Debug)]
+pub enum ExtensionType {
+    Unicode,
+    Transformed,
+    Pu,
+    Other
+}
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[derive(Debug)]
+pub struct KeyPair(String, String);
+
+
+#[derive(Debug)]
+pub struct UnicodeExtension {
+    pub keywords: KeyPair,
+    pub attributes: Vec<String>
+}
+
+#[derive(Debug)]
+pub struct TransformedExtension {
+    pub fields: KeyPair,
+    pub lang: Option<UnicodeLanguageId>,
+}
+
+#[derive(Debug)]
+pub struct PuExtension {
+    pub value: String,
+}
+
+#[derive(Debug)]
+pub struct OtherExtension {
+    pub value: String,
+}
+
+#[derive(Debug)]
+pub struct UnicdeLocaleId {
+    pub lang: UnicodeLanguageId,
+}
+
+pub fn parse(locale: String) -> Result<UnicdeLocaleId, ParserError>{
+    Ok(UnicdeLocaleId {
+        lang: UnicodeLanguageId {},
+    })
 }
