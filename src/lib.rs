@@ -1,10 +1,8 @@
-pub use self::errors::ParserError;
+use crate::errors::ParserError;
+use crate::lang::UnicodeLanguageId;
 
 pub mod errors;
-
-#[derive(Debug)]
-pub struct UnicodeLanguageId {
-}
+mod lang;
 
 #[derive(Debug)]
 pub enum ExtensionType {
@@ -43,10 +41,16 @@ pub struct OtherExtension {
 #[derive(Debug)]
 pub struct UnicdeLocaleId {
     pub lang: UnicodeLanguageId,
+    // pub extensions: Option(Some<Vec<ExtensionType>),
 }
 
-pub fn parse(locale: String) -> Result<UnicdeLocaleId, ParserError>{
+pub fn parse(locale: &str) -> Result<UnicdeLocaleId, ParserError>{
     Ok(UnicdeLocaleId {
-        lang: UnicodeLanguageId {},
+        lang: UnicodeLanguageId {
+            language: String::from("en"),
+            script: None,
+            region: None,
+            variants: vec![],
+        },
     })
 }
