@@ -9,17 +9,16 @@ pub enum ExtensionType {
     Unicode,
     Transformed,
     Pu,
-    Other
+    Other,
 }
 
 #[derive(Debug)]
 pub struct KeyPair(String, String);
 
-
 #[derive(Debug)]
 pub struct UnicodeExtension {
     pub keywords: KeyPair,
-    pub attributes: Vec<String>
+    pub attributes: Vec<String>,
 }
 
 #[derive(Debug)]
@@ -44,7 +43,7 @@ pub struct UnicdeLocaleId {
     // pub extensions: Option(Some<Vec<ExtensionType>),
 }
 
-pub fn parse(locale: &str) -> Result<UnicdeLocaleId, ParserError>{
+pub fn parse(locale: &str) -> Result<UnicdeLocaleId, ParserError> {
     Ok(UnicdeLocaleId {
         lang: UnicodeLanguageId {
             language: String::from("en"),
