@@ -3,8 +3,9 @@ use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, PartialEq)]
 pub enum ParserError {
-    MissingLangugage,
-    // TODO: Add variants
+    MissingLanguage,
+    InvalidLanguage,
+    Unexpected,
 }
 
 impl Error for ParserError {}
@@ -12,7 +13,9 @@ impl Error for ParserError {}
 impl Display for ParserError {
     fn fmt(&self, f: &mut Formatter) -> Result {
         let value = match self {
-            ParserError::MissingLangugage => "Missing language identifier",
+            ParserError::MissingLanguage => "Missing language identifier",
+            ParserError::InvalidLanguage => "Invalid language identifier",
+            ParserError::Unexpected => "Unexpected error",
         };
         f.write_str(value)
     }
