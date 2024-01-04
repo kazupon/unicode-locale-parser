@@ -88,7 +88,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
  */
 
 #[test]
-fn test_parse_unicode_language_id_success() {
+fn success_parse_unicode_language_id() {
     // full case
     let result = parse_unicode_language_id("en-Latn-US-macos-windows-linux").unwrap();
     assert_eq!(result.language, "en");
@@ -153,7 +153,7 @@ fn test_parse_unicode_language_id_success() {
 }
 
 #[test]
-fn test_parse_unicode_language_id_fail() {
+fn fail_parse_unicode_language_id() {
     // missing language
     let result = parse_unicode_language_id("");
     assert_eq!(result.err(), Some(ParserError::MissingLanguage));

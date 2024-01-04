@@ -71,7 +71,7 @@ pub fn variant_subtag(subtag: &str) -> Result<&str, ParserError> {
  */
 
 #[test]
-fn test_language_subtag_success() {
+fn success_language_subtag() {
     // 'root'
     let result = language_subtag("root").unwrap();
     assert_eq!(result, "root");
@@ -82,7 +82,7 @@ fn test_language_subtag_success() {
 }
 
 #[test]
-fn test_get_language_subtag_fail() {
+fn fail_get_language_subtag() {
     // 1 character
     let result = language_subtag("i");
     assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
@@ -101,13 +101,13 @@ fn test_get_language_subtag_fail() {
 }
 
 #[test]
-fn test_script_subtag_success() {
+fn success_script_subtag() {
     let result = script_subtag("Latn").unwrap();
     assert_eq!(result, "Latn");
 }
 
 #[test]
-fn test_script_subtag_fail() {
+fn fail_script_subtag() {
     // 3 character
     let result = script_subtag("foo");
     assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
@@ -122,7 +122,7 @@ fn test_script_subtag_fail() {
 }
 
 #[test]
-fn test_region_subtag_success() {
+fn success_region_subtag() {
     // ascii alphabet
     let result = region_subtag("JP").unwrap();
     assert_eq!(result, "JP");
@@ -133,7 +133,7 @@ fn test_region_subtag_success() {
 }
 
 #[test]
-fn test_region_subtag_fail() {
+fn fail_region_subtag() {
     // 1 character
     let result = region_subtag("J");
     assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
@@ -148,7 +148,7 @@ fn test_region_subtag_fail() {
 }
 
 #[test]
-fn test_variant_subtag_success() {
+fn success_variant_subtag() {
     // 4 characters with digit
     let result = variant_subtag("1996").unwrap();
     assert_eq!(result, "1996");
@@ -167,7 +167,7 @@ fn test_variant_subtag_success() {
 }
 
 #[test]
-fn test_variant_subtag_fail() {
+fn fail_variant_subtag() {
     // 3 characters
     let result = variant_subtag("abc");
     assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
