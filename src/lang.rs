@@ -10,31 +10,33 @@ pub struct UnicodeLanguageId {
 
 static LANG_ROOT: &str = "root";
 
-fn get_language(lang: &str) -> Result<&str, ParserError> {
-    if LANG_ROOT.eq(lang) {
+fn get_language_subtag(subtag: &str) -> Result<&str, ParserError> {
+    if LANG_ROOT.eq(subtag) {
         // 'root' is a special case
         Ok(LANG_ROOT)
     } else {
         // unicode_language_subtag
         // https://unicode.org/reports/tr35/#unicode_language_subtag
-        let len = lang.len();
-        if !(2..=8).contains(&len) || len == 4 || !lang.chars().all(|c| c.is_ascii_alphabetic()) {
+        let len = subtag.len();
+        if !(2..=8).contains(&len) || len == 4 || !subtag.chars().all(|c| c.is_ascii_alphabetic()) {
             Err(ParserError::InvalidLanguage)
         } else {
-            Ok(lang)
+            Ok(subtag)
         }
     }
 }
 
 pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, ParserError> {
+    // check empty
     if chunk.is_empty() {
         return Err(ParserError::MissingLanguage);
     }
+
     let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();
 
     // language subtag
     let language = if let Some(lang) = iter.next() {
-        get_language(lang)?
+        get_language_subtag(lang)?
     } else {
         return Err(ParserError::Unexpected);
     };
