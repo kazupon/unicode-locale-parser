@@ -1,7 +1,5 @@
 use crate::errors::ParserError;
-use crate::subtags::{
-    get_language_subtag, get_region_subtag, get_script_subtag, get_variant_subtag,
-};
+use crate::subtags::{language_subtag, region_subtag, script_subtag, variant_subtag};
 
 #[derive(Debug)]
 pub struct UnicodeLanguageId {
@@ -21,7 +19,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
 
     // language subtag
     let language = if let Some(lang) = iter.next() {
-        get_language_subtag(lang)?
+        language_subtag(lang)?
     } else {
         return Err(ParserError::Unexpected);
     };
@@ -34,29 +32,29 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
     let mut current = 1;
     while let Some(subtag) = iter.peek() {
         if current == 1 {
-            if let Ok(script_subtag) = get_script_subtag(subtag) {
+            if let Ok(script_subtag) = script_subtag(subtag) {
                 script = Some(String::from(script_subtag));
                 current = 2;
-            } else if let Ok(region_subtag) = get_region_subtag(subtag) {
+            } else if let Ok(region_subtag) = region_subtag(subtag) {
                 region = Some(String::from(region_subtag));
                 current = 3;
-            } else if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+            } else if let Ok(variant_subtag) = variant_subtag(subtag) {
                 variants.push(String::from(variant_subtag));
                 current = 3;
             } else {
                 break;
             }
         } else if current == 2 {
-            if let Ok(region_subtag) = get_region_subtag(subtag) {
+            if let Ok(region_subtag) = region_subtag(subtag) {
                 region = Some(String::from(region_subtag));
                 current = 3;
-            } else if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+            } else if let Ok(variant_subtag) = variant_subtag(subtag) {
                 variants.push(String::from(variant_subtag));
                 current = 3;
             } else {
                 break;
             }
-        } else if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+        } else if let Ok(variant_subtag) = variant_subtag(subtag) {
             variants.push(String::from(variant_subtag));
         } else {
             break;
