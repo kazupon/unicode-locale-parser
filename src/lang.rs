@@ -1,5 +1,7 @@
 use crate::errors::ParserError;
-use crate::subtags::{get_language_subtag, get_script_subtag, get_region_subtag, get_variant_subtag};
+use crate::subtags::{
+    get_language_subtag, get_region_subtag, get_script_subtag, get_variant_subtag,
+};
 
 #[derive(Debug)]
 pub struct UnicodeLanguageId {
@@ -54,12 +56,10 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
             } else {
                 break;
             }
+        } else if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+            variants.push(String::from(variant_subtag));
         } else {
-            if let Ok(variant_subtag) = get_variant_subtag(subtag) {
-                variants.push(String::from(variant_subtag));
-            } else {
-                break;
-            }
+            break;
         }
         iter.next();
     }
@@ -69,6 +69,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
         return Err(ParserError::InvalidSubtag);
     }
 
+    // normalize variants
     let variants = if variants.is_empty() {
         None
     } else {
@@ -95,9 +96,16 @@ fn test_parse_unicode_language_id_success() {
     assert_eq!(result.language, "en");
     assert_eq!(result.script, Some("Latn".to_string()));
     assert_eq!(result.region, Some("US".to_string()));
-    assert_eq!(result.variants, Some(vec!["macos".to_string(), "windows".to_string(), "linux".to_string()]));
+    assert_eq!(
+        result.variants,
+        Some(vec![
+            "macos".to_string(),
+            "windows".to_string(),
+            "linux".to_string()
+        ])
+    );
 
-    // use sep with underscore 
+    // use sep with underscore
     let result = parse_unicode_language_id("en_Latn_US").unwrap();
     assert_eq!(result.language, "en");
     assert_eq!(result.script, Some("Latn".to_string()));
@@ -144,7 +152,6 @@ fn test_parse_unicode_language_id_success() {
     assert_eq!(result.script, None);
     assert_eq!(result.region, None);
     assert_eq!(result.variants, None);
-
 }
 
 #[test]
