@@ -29,6 +29,19 @@ pub fn get_script_subtag(subtag: &str) -> Result<&str, ParserError> {
     }
 }
 
+pub fn get_region_subtag(subtag: &str) -> Result<&str, ParserError> {
+    let len = subtag.len();
+    // unicode_region_subtag
+    // https://unicode.org/reports/tr35/#unicode_region_subtag
+    if (len == 2 && subtag.chars().all(|c| c.is_ascii_alphabetic()))
+        || (len == 3 && subtag.chars().all(|c| c.is_ascii_digit()))
+    {
+        Ok(subtag)
+    } else {
+        Err(ParserError::InvalidSubtag)
+    }
+}
+
 /**
  * Unit tests
  */
@@ -81,5 +94,31 @@ fn test_get_script_subtag_fail() {
 
     // not alphabet
     let result = get_script_subtag("123");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+}
+
+#[test]
+fn test_get_region_subtag_success() {
+    // ascii alphabet
+    let result = get_region_subtag("JP").unwrap();
+    assert_eq!(result, "JP");
+
+    // 3 digit number
+    let result = get_region_subtag("001").unwrap();
+    assert_eq!(result, "001");
+}
+
+#[test]
+fn test_get_region_subtag_fail() {
+    // 1 character
+    let result = get_region_subtag("J");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+
+    // 3 ascii characters
+    let result = get_region_subtag("JPN");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+
+    // 4 digit characters
+    let result = get_region_subtag("1234");
     assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
 }

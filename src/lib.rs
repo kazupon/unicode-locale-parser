@@ -2,8 +2,8 @@ use crate::errors::ParserError;
 use crate::lang::UnicodeLanguageId;
 
 pub mod errors;
-mod subtag;
 mod lang;
+mod subtag;
 
 #[derive(Debug)]
 pub enum ExtensionType {
