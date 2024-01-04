@@ -54,16 +54,13 @@ pub fn get_variant_subtag(subtag: &str) -> Result<&str, ParserError> {
     }
 
     let subtag_bytes = subtag.as_bytes();
-    if len >= 5 && !subtag_bytes.iter().all(|b| b.is_ascii_alphanumeric()) {
+    if len >= 5 && !subtag_bytes.iter().all(|b| b.is_ascii_alphanumeric())
+        || len == 4 && !subtag_bytes[0].is_ascii_digit()
+        || !subtag_bytes[1..]
+            .iter()
+            .all(|b: &u8| b.is_ascii_alphanumeric())
+    {
         return Err(ParserError::InvalidSubtag);
-    } else if len == 4 {
-        if !subtag_bytes[0].is_ascii_digit()
-            || !subtag_bytes[1..]
-                .iter()
-                .all(|b: &u8| b.is_ascii_alphanumeric())
-        {
-            return Err(ParserError::InvalidSubtag);
-        }
     }
 
     Ok(subtag)
