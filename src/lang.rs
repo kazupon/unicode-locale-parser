@@ -1,5 +1,6 @@
 use crate::errors::ParserError;
 use crate::subtags::{language_subtag, region_subtag, script_subtag, variant_subtag};
+use std::fmt::{self, Write};
 
 #[derive(Debug)]
 pub struct UnicodeLanguageId {
@@ -83,6 +84,27 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
     })
 }
 
+impl fmt::Display for UnicodeLanguageId {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.language.fmt(f)?;
+        if let Some(ref script) = self.script {
+            f.write_char('-')?;
+            script.fmt(f)?;
+        }
+        if let Some(ref region) = self.region {
+            f.write_char('-')?;
+            region.fmt(f)?;
+        }
+        if let Some(ref variants) = self.variants {
+            for variant in variants.iter() {
+                f.write_char('-')?;
+                variant.fmt(f)?;
+            }
+        }
+        Ok(())
+    }
+}
+
 /**
  * Unit tests
  */
@@ -150,6 +172,10 @@ fn success_parse_unicode_language_id() {
     assert_eq!(result.script, None);
     assert_eq!(result.region, None);
     assert_eq!(result.variants, None);
+
+    // Display trait implementation
+    let result = parse_unicode_language_id("en-Latn-US-macos").unwrap();
+    assert_eq!("en-Latn-US-macos", format!("{}", result));
 }
 
 #[test]
