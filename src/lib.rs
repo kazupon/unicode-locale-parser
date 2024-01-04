@@ -4,7 +4,7 @@ use crate::errors::ParserError;
 use crate::lang::UnicodeLanguageId;
 
 pub mod errors;
-mod lang;
+pub mod lang;
 mod subtags;
 
 #[derive(Debug)]
