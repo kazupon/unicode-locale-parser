@@ -5,6 +5,7 @@ use std::fmt::{Display, Formatter, Result};
 pub enum ParserError {
     MissingLanguage,
     InvalidLanguage,
+    InvalidSubtag,
     Unexpected,
 }
 
@@ -15,6 +16,7 @@ impl Display for ParserError {
         let value = match self {
             ParserError::MissingLanguage => "Missing language identifier",
             ParserError::InvalidLanguage => "Invalid language identifier",
+            ParserError::InvalidSubtag => "Invalid language subtag",
             ParserError::Unexpected => "Unexpected error",
         };
         f.write_str(value)

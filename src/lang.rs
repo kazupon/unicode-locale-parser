@@ -1,4 +1,5 @@
 use crate::errors::ParserError;
+use crate::subtag::{get_language_subtag, get_script_subtag};
 
 #[derive(Debug)]
 pub struct UnicodeLanguageId {
@@ -6,24 +7,6 @@ pub struct UnicodeLanguageId {
     pub script: Option<String>,
     pub region: Option<String>,
     pub variants: Vec<String>, // TODO: should re-design
-}
-
-static LANG_ROOT: &str = "root";
-
-fn get_language_subtag(subtag: &str) -> Result<&str, ParserError> {
-    if LANG_ROOT.eq(subtag) {
-        // 'root' is a special case
-        Ok(LANG_ROOT)
-    } else {
-        // unicode_language_subtag
-        // https://unicode.org/reports/tr35/#unicode_language_subtag
-        let len = subtag.len();
-        if !(2..=8).contains(&len) || len == 4 || !subtag.chars().all(|c| c.is_ascii_alphabetic()) {
-            Err(ParserError::InvalidLanguage)
-        } else {
-            Ok(subtag)
-        }
-    }
 }
 
 pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, ParserError> {
@@ -53,6 +36,10 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
     })
 }
 
+/**
+ * Unit tests
+ */
+
 #[test]
 fn test_language_id() {
     // 'root'
@@ -71,23 +58,4 @@ fn test_language_id() {
 fn test_language_id_missing() {
     let result = parse_unicode_language_id("");
     assert_eq!(result.err(), Some(ParserError::MissingLanguage));
-}
-
-#[test]
-fn test_invalid_language_id() {
-    // one character
-    let result = parse_unicode_language_id("i");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
-
-    // 4 characters
-    let result = parse_unicode_language_id("food");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
-
-    // 9 characters
-    let result = parse_unicode_language_id("unicodela");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
-
-    // not alphabet
-    let result = parse_unicode_language_id("12");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
 }

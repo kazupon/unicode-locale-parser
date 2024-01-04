@@ -2,6 +2,7 @@ use crate::errors::ParserError;
 use crate::lang::UnicodeLanguageId;
 
 pub mod errors;
+mod subtag;
 mod lang;
 
 #[derive(Debug)]
