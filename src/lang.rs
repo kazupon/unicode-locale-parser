@@ -2,7 +2,7 @@ use crate::errors::ParserError;
 use crate::subtags::{language_subtag, region_subtag, script_subtag, variant_subtag};
 use std::fmt::{self, Write};
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct UnicodeLanguageId {
     pub language: String,
     pub script: Option<String>,
@@ -176,6 +176,12 @@ fn success_parse_unicode_language_id() {
     // Display trait implementation
     let result = parse_unicode_language_id("en-Latn-US-macos").unwrap();
     assert_eq!("en-Latn-US-macos", format!("{}", result));
+
+    // PartialEq trait implementation
+    assert_eq!(
+        parse_unicode_language_id("en-Latn-US").unwrap(),
+        parse_unicode_language_id("en-Latn-US").unwrap()
+    );
 }
 
 #[test]
