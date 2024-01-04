@@ -1,3 +1,5 @@
+#![warn(rustdoc::missing_crate_level_docs)]
+
 use crate::errors::ParserError;
 use crate::lang::UnicodeLanguageId;
 

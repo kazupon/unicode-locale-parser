@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result};
 
+#[warn(missing_docs)]
 #[derive(Debug, PartialEq)]
 pub enum ParserError {
     MissingLanguage,
