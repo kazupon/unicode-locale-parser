@@ -3,7 +3,7 @@ use crate::lang::UnicodeLanguageId;
 
 pub mod errors;
 mod lang;
-mod subtag;
+mod subtags;
 
 #[derive(Debug)]
 pub enum ExtensionType {

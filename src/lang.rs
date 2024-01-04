@@ -1,5 +1,5 @@
 use crate::errors::ParserError;
-use crate::subtag::{get_language_subtag, get_script_subtag};
+use crate::subtags::{get_language_subtag, get_script_subtag};
 
 #[derive(Debug)]
 pub struct UnicodeLanguageId {
