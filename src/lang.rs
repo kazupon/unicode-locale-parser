@@ -1,12 +1,12 @@
 use crate::errors::ParserError;
-use crate::subtags::{get_language_subtag, get_script_subtag};
+use crate::subtags::{get_language_subtag, get_script_subtag, get_region_subtag, get_variant_subtag};
 
 #[derive(Debug)]
 pub struct UnicodeLanguageId {
     pub language: String,
     pub script: Option<String>,
     pub region: Option<String>,
-    pub variants: Vec<String>, // TODO: should re-design
+    pub variants: Option<Vec<String>>,
 }
 
 pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, ParserError> {
@@ -23,13 +23,61 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
     } else {
         return Err(ParserError::Unexpected);
     };
+    let language = String::from(language);
 
+    // other subtags
     let mut script = None;
     let mut region = None;
     let mut variants = vec![];
+    let mut current = 1;
+    while let Some(subtag) = iter.peek() {
+        if current == 1 {
+            if let Ok(script_subtag) = get_script_subtag(subtag) {
+                script = Some(String::from(script_subtag));
+                current = 2;
+            } else if let Ok(region_subtag) = get_region_subtag(subtag) {
+                region = Some(String::from(region_subtag));
+                current = 3;
+            } else if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+                variants.push(String::from(variant_subtag));
+                current = 3;
+            } else {
+                break;
+            }
+        } else if current == 2 {
+            if let Ok(region_subtag) = get_region_subtag(subtag) {
+                region = Some(String::from(region_subtag));
+                current = 3;
+            } else if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+                variants.push(String::from(variant_subtag));
+                current = 3;
+            } else {
+                break;
+            }
+        } else {
+            if let Ok(variant_subtag) = get_variant_subtag(subtag) {
+                variants.push(String::from(variant_subtag));
+            } else {
+                break;
+            }
+        }
+        iter.next();
+    }
+
+    // check if there are any subtags left
+    if iter.peek().is_some() {
+        return Err(ParserError::InvalidSubtag);
+    }
+
+    let variants = if variants.is_empty() {
+        None
+    } else {
+        variants.dedup();
+        Some(variants)
+    };
 
     Ok(UnicodeLanguageId {
-        language: String::from(language),
+        language,
         script,
         region,
         variants,
@@ -41,21 +89,71 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
  */
 
 #[test]
-fn test_language_id() {
-    // 'root'
-    let result = parse_unicode_language_id("root").unwrap();
-    assert_eq!(result.language, "root");
-    assert_eq!(result.script, None);
-    assert_eq!(result.region, None);
-    assert_eq!(result.variants.is_empty(), true);
+fn test_parse_unicode_language_id_success() {
+    // full case
+    let result = parse_unicode_language_id("en-Latn-US-macos-windows-linux").unwrap();
+    assert_eq!(result.language, "en");
+    assert_eq!(result.script, Some("Latn".to_string()));
+    assert_eq!(result.region, Some("US".to_string()));
+    assert_eq!(result.variants, Some(vec!["macos".to_string(), "windows".to_string(), "linux".to_string()]));
+
+    // use sep with underscore 
+    let result = parse_unicode_language_id("en_Latn_US").unwrap();
+    assert_eq!(result.language, "en");
+    assert_eq!(result.script, Some("Latn".to_string()));
+    assert_eq!(result.region, Some("US".to_string()));
 
     // language subtag only
     let result = parse_unicode_language_id("en").unwrap();
     assert_eq!(result.language, "en");
+    assert_eq!(result.script, None);
+    assert_eq!(result.region, None);
+    assert_eq!(result.variants, None);
+
+    // language subtag and region subtag
+    let result = parse_unicode_language_id("en-US").unwrap();
+    assert_eq!(result.language, "en");
+    assert_eq!(result.script, None);
+    assert_eq!(result.region, Some("US".to_string()));
+    assert_eq!(result.variants, None);
+
+    // language subtag and script subtag
+    let result = parse_unicode_language_id("en-Latn").unwrap();
+    assert_eq!(result.language, "en");
+    assert_eq!(result.script, Some("Latn".to_string()));
+    assert_eq!(result.region, None);
+    assert_eq!(result.variants, None);
+
+    // language subtag and variant subtag
+    let result = parse_unicode_language_id("en-macos").unwrap();
+    assert_eq!(result.language, "en");
+    assert_eq!(result.script, None);
+    assert_eq!(result.region, None);
+    assert_eq!(result.variants, Some(vec!["macos".to_string()]));
+
+    // language subtag, script subtag and region subtag
+    let result = parse_unicode_language_id("en-Latn-US").unwrap();
+    assert_eq!(result.language, "en");
+    assert_eq!(result.script, Some("Latn".to_string()));
+    assert_eq!(result.region, Some("US".to_string()));
+    assert_eq!(result.variants, None);
+
+    // language subtag: 'root'
+    let result = parse_unicode_language_id("root").unwrap();
+    assert_eq!(result.language, "root");
+    assert_eq!(result.script, None);
+    assert_eq!(result.region, None);
+    assert_eq!(result.variants, None);
+
 }
 
 #[test]
-fn test_language_id_missing() {
+fn test_parse_unicode_language_id_fail() {
+    // missing language
     let result = parse_unicode_language_id("");
     assert_eq!(result.err(), Some(ParserError::MissingLanguage));
+
+    // remain subtags
+    let result = parse_unicode_language_id("en-Latn-US-macos-macoswindows");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
 }

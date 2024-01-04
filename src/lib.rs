@@ -50,7 +50,7 @@ pub fn parse(locale: &str) -> Result<UnicdeLocaleId, ParserError> {
             language: String::from("en"),
             script: None,
             region: None,
-            variants: vec![],
+            variants: None,
         },
     })
 }
