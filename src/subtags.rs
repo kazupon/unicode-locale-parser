@@ -1,6 +1,6 @@
 use crate::errors::ParserError;
 
-static LANG_ROOT: &str = "root";
+const LANG_ROOT: &str = "root";
 
 pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
     if LANG_ROOT.eq(subtag) {
