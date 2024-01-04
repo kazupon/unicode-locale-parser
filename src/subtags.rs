@@ -19,9 +19,9 @@ pub fn get_language_subtag(subtag: &str) -> Result<&str, ParserError> {
 }
 
 pub fn get_script_subtag(subtag: &str) -> Result<&str, ParserError> {
-    let len = subtag.len();
     // unicode_script_subtag
     // https://unicode.org/reports/tr35/#unicode_script_subtag
+    let len = subtag.len();
     if len != 4 || !subtag.chars().all(|c| c.is_ascii_alphabetic()) {
         Err(ParserError::InvalidSubtag)
     } else {
@@ -30,9 +30,9 @@ pub fn get_script_subtag(subtag: &str) -> Result<&str, ParserError> {
 }
 
 pub fn get_region_subtag(subtag: &str) -> Result<&str, ParserError> {
-    let len = subtag.len();
     // unicode_region_subtag
     // https://unicode.org/reports/tr35/#unicode_region_subtag
+    let len = subtag.len();
     if (len == 2 && subtag.chars().all(|c| c.is_ascii_alphabetic()))
         || (len == 3 && subtag.chars().all(|c| c.is_ascii_digit()))
     {
@@ -40,6 +40,30 @@ pub fn get_region_subtag(subtag: &str) -> Result<&str, ParserError> {
     } else {
         Err(ParserError::InvalidSubtag)
     }
+}
+
+pub fn get_variant_subtag(subtag: &str) -> Result<&str, ParserError> {
+    // unicode_variant_subtag
+    // https://unicode.org/reports/tr35/#unicode_variant_subtag
+    let len = subtag.len();
+    if !(4..=8).contains(&len) {
+        return Err(ParserError::InvalidSubtag);
+    }
+
+    if len >= 5 && !subtag.chars().all(|c| c.is_ascii_alphanumeric()) {
+        return Err(ParserError::InvalidSubtag);
+    } else if len == 4 {
+        let subtag_bytes = subtag.as_bytes();
+        if !subtag_bytes[0].is_ascii_digit()
+            || !subtag_bytes[1..]
+                .iter()
+                .all(|c: &u8| c.is_ascii_alphanumeric())
+        {
+            return Err(ParserError::InvalidSubtag);
+        }
+    }
+
+    Ok(subtag)
 }
 
 /**
@@ -120,5 +144,39 @@ fn test_get_region_subtag_fail() {
 
     // 4 digit characters
     let result = get_region_subtag("1234");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+}
+
+#[test]
+fn test_get_variant_subtag_success() {
+    // 4 characters with digit
+    let result = get_variant_subtag("1996").unwrap();
+    assert_eq!(result, "1996");
+
+    // 4 characters with digit & alphabet
+    let result = get_variant_subtag("1ABC").unwrap();
+    assert_eq!(result, "1ABC");
+
+    // 5 characters with alphabet and digit
+    let result = get_variant_subtag("abcd1").unwrap();
+    assert_eq!(result, "abcd1");
+
+    // 8 characters with alphabet and digit
+    let result = get_variant_subtag("abcdefgh").unwrap();
+    assert_eq!(result, "abcdefgh");
+}
+
+#[test]
+fn test_get_variant_subtag_fail() {
+    // 3 characters
+    let result = get_variant_subtag("abc");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+
+    // 9 characters
+    let result = get_variant_subtag("abcdefghi");
+    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+
+    // 4 characters with alphabet
+    let result = get_variant_subtag("aBCD");
     assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
 }
