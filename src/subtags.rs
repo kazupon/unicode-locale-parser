@@ -10,7 +10,10 @@ pub fn get_language_subtag(subtag: &str) -> Result<&str, ParserError> {
         // unicode_language_subtag
         // https://unicode.org/reports/tr35/#unicode_language_subtag
         let len = subtag.len();
-        if !(2..=8).contains(&len) || len == 4 || !subtag.chars().all(|c| c.is_ascii_alphabetic()) {
+        if !(2..=8).contains(&len)
+            || len == 4
+            || !subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic())
+        {
             Err(ParserError::InvalidLanguage)
         } else {
             Ok(subtag)
@@ -22,7 +25,7 @@ pub fn get_script_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_script_subtag
     // https://unicode.org/reports/tr35/#unicode_script_subtag
     let len = subtag.len();
-    if len != 4 || !subtag.chars().all(|c| c.is_ascii_alphabetic()) {
+    if len != 4 || !subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic()) {
         Err(ParserError::InvalidSubtag)
     } else {
         Ok(subtag)
@@ -33,8 +36,8 @@ pub fn get_region_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_region_subtag
     // https://unicode.org/reports/tr35/#unicode_region_subtag
     let len = subtag.len();
-    if (len == 2 && subtag.chars().all(|c| c.is_ascii_alphabetic()))
-        || (len == 3 && subtag.chars().all(|c| c.is_ascii_digit()))
+    if (len == 2 && subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic()))
+        || (len == 3 && subtag.as_bytes().iter().all(|b| b.is_ascii_digit()))
     {
         Ok(subtag)
     } else {
@@ -50,14 +53,14 @@ pub fn get_variant_subtag(subtag: &str) -> Result<&str, ParserError> {
         return Err(ParserError::InvalidSubtag);
     }
 
-    if len >= 5 && !subtag.chars().all(|c| c.is_ascii_alphanumeric()) {
+    let subtag_bytes = subtag.as_bytes();
+    if len >= 5 && !subtag_bytes.iter().all(|b| b.is_ascii_alphanumeric()) {
         return Err(ParserError::InvalidSubtag);
     } else if len == 4 {
-        let subtag_bytes = subtag.as_bytes();
         if !subtag_bytes[0].is_ascii_digit()
             || !subtag_bytes[1..]
                 .iter()
-                .all(|c: &u8| c.is_ascii_alphanumeric())
+                .all(|b: &u8| b.is_ascii_alphanumeric())
         {
             return Err(ParserError::InvalidSubtag);
         }
