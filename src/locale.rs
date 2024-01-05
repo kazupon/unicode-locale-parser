@@ -2,39 +2,6 @@ use crate::errors::ParserError;
 use crate::lang::{parse_unicode_language_id_from_iter, UnicodeLanguageIdentifier};
 
 #[derive(Debug)]
-pub enum ExtensionType {
-    Unicode,
-    Transformed,
-    Pu,
-    Other,
-}
-
-#[derive(Debug)]
-pub struct KeyPair(String, String);
-
-#[derive(Debug)]
-pub struct UnicodeExtension {
-    pub keywords: KeyPair,
-    pub attributes: Vec<String>,
-}
-
-#[derive(Debug)]
-pub struct TransformedExtension {
-    pub fields: KeyPair,
-    pub lang: Option<UnicodeLanguageIdentifier>,
-}
-
-#[derive(Debug)]
-pub struct PuExtension {
-    pub value: String,
-}
-
-#[derive(Debug)]
-pub struct OtherExtension {
-    pub value: String,
-}
-
-#[derive(Debug)]
 pub struct UnicdeLocaleIdentifier {
     pub language: UnicodeLanguageIdentifier,
     // pub extensions: Option(Some<Vec<ExtensionType>),
