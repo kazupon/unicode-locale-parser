@@ -1,5 +1,6 @@
 use crate::errors::ParserError;
 use crate::lang::UnicodeLanguageIdentifier;
+use crate::subtags;
 use std::fmt::{self, Write};
 use std::iter::Peekable;
 
@@ -80,11 +81,42 @@ pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> 
 pub fn parse_unicode_extensions_from_iter<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<Extensions, ParserError> {
+    let mut unicode_locale = None;
+    let mut transformed = None;
+    let mut pu = None;
+    let mut other = None;
+
+    let mut chunk = iter.next();
+    while let Some(subtag) = chunk {
+        match subtag
+            .as_bytes()
+            .first()
+            .map(|c| ExtensionKind::from_byte(*c))
+        {
+            Some(Ok(ExtensionKind::UnicodeLocale)) => {
+                unimplemented!("TODO: unicode locale extensions")
+            }
+            Some(Ok(ExtensionKind::Transformed)) => {
+                unimplemented!("TODO: transformed extensions")
+            }
+            Some(Ok(ExtensionKind::Pu)) => {
+                unimplemented!("TODO: pu extensions")
+            }
+            Some(Ok(ExtensionKind::Other(c))) => {
+                unimplemented!("TODO: other extensions")
+            }
+            None => {}
+            _ => unreachable!(),
+        }
+
+        chunk = iter.next();
+    }
+
     Ok(Extensions {
-        unicode_locale: None,
-        transformed: None,
-        pu: None,
-        other: None,
+        unicode_locale,
+        transformed,
+        pu,
+        other,
     })
 }
 
