@@ -4,7 +4,7 @@ mod transformed;
 mod unicode_locale;
 
 pub use other::OtherExtensions;
-pub use pu::PuExtensions;
+pub use pu::{pu_extensions, PuExtensions};
 pub use transformed::TransformedExtensions;
 pub use unicode_locale::UnicodeLocaleExtensions;
 
@@ -88,7 +88,11 @@ pub fn parse_unicode_extensions_from_iter<'a>(
                 unimplemented!("TODO: transformed extensions")
             }
             Some(Ok(ExtensionKind::Pu)) => {
-                unimplemented!("TODO: pu extensions")
+                if pu.is_some() {
+                    // TODO:
+                    unimplemented!("TODO: should be throw error")
+                }
+                pu = Some(pu_extensions(iter)?);
             }
             Some(Ok(ExtensionKind::Other(c))) => {
                 unimplemented!("TODO: other extensions")
@@ -128,6 +132,21 @@ pub fn parse_unicode_extensions_from_iter<'a>(
 /**
  * Tests
  */
+
+#[test]
+fn success_parse_unicode_extensions() {
+    let extensions = parse_unicode_extensions("x-foo-123").unwrap();
+    assert_eq!("x-foo-123", format!("{}", extensions.pu.unwrap()));
+}
+
+#[test]
+fn fail_parse_unicode_extensions() {
+    // missing locale
+    assert_eq!(
+        ParserError::Missing,
+        parse_unicode_extensions("").unwrap_err()
+    );
+}
 
 #[test]
 fn success_extension_kind_from_byte() {
