@@ -199,10 +199,17 @@ fn success_parse_unicode_language_id() {
     assert_eq!(result.variants, Some(vec!["macos".to_string()]));
 
     // Display trait implementation
-    let result = parse_unicode_language_id("en-Latn-US-macos").unwrap();
-    assert_eq!("en-Latn-US-macos", format!("{}", result));
-    let result = parse_unicode_language_id("und-Latn-US-macos").unwrap();
-    assert_eq!("und-Latn-US-macos", format!("{}", result));
+    assert_eq!(
+        "en-Latn-US-macos",
+        format!("{}", parse_unicode_language_id("en-Latn-US-macos").unwrap())
+    );
+    assert_eq!(
+        "und-Latn-US-macos",
+        format!(
+            "{}",
+            parse_unicode_language_id("und-Latn-US-macos").unwrap()
+        )
+    );
 
     // PartialEq trait implementation
     assert_eq!(
@@ -212,19 +219,23 @@ fn success_parse_unicode_language_id() {
 
     // FromStr trait implementation
     let result: UnicodeLanguageIdentifier = "en-Latn-US-macos".parse().unwrap();
-    assert_eq!(result.language, "en");
-    assert_eq!(result.script, Some("Latn".to_string()));
-    assert_eq!(result.region, Some("US".to_string()));
-    assert_eq!(result.variants, Some(vec!["macos".to_string()]));
+    assert_eq!("en", result.language);
+    assert_eq!(Some("Latn".to_string()), result.script);
+    assert_eq!(Some("US".to_string()), result.region);
+    assert_eq!(Some(vec!["macos".to_string()]), result.variants);
 }
 
 #[test]
 fn fail_parse_unicode_language_id() {
     // missing language
-    let result = parse_unicode_language_id("");
-    assert_eq!(result.err(), Some(ParserError::Missing));
+    assert_eq!(
+        ParserError::Missing,
+        parse_unicode_language_id("").unwrap_err()
+    );
 
     // remain subtags
-    let result = parse_unicode_language_id("en-Latn-US-macos-macoswindows");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        parse_unicode_language_id("en-Latn-US-macos-macoswindows").unwrap_err()
+    );
 }

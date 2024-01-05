@@ -82,118 +82,130 @@ pub fn variant_subtag(subtag: &str) -> Result<&str, ParserError> {
 #[test]
 fn success_language_subtag() {
     // 'root'
-    let result = language_subtag("root").unwrap();
-    assert_eq!(result, LANG_EMPTY);
+    assert_eq!(LANG_EMPTY, language_subtag("root").unwrap());
 
     // language subtag only
-    let result = language_subtag("en").unwrap();
-    assert_eq!(result, "en");
+    assert_eq!("en", language_subtag("en").unwrap());
 
     // 3 characters
-    let result = language_subtag("jpn").unwrap();
-    assert_eq!(result, "jpn");
+    assert_eq!("jpn", language_subtag("jpn").unwrap());
 
     // 'und'
-    let result = language_subtag("und").unwrap();
-    assert_eq!(result, LANG_EMPTY);
+    assert_eq!(LANG_EMPTY, language_subtag("und").unwrap());
 }
 
 #[test]
 fn fail_get_language_subtag() {
     // 1 character
-    let result = language_subtag("i");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
+    assert_eq!(
+        ParserError::InvalidLanguage,
+        language_subtag("i").unwrap_err()
+    );
 
     // 4 characters
-    let result = language_subtag("food");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
+    assert_eq!(
+        ParserError::InvalidLanguage,
+        language_subtag("food").unwrap_err()
+    );
 
     // 9 characters
-    let result = language_subtag("unicodela");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
+    assert_eq!(
+        ParserError::InvalidLanguage,
+        language_subtag("unicodela").unwrap_err()
+    );
 
     // not alphabet
-    let result = language_subtag("12");
-    assert_eq!(result.err(), Some(ParserError::InvalidLanguage));
+    assert_eq!(
+        ParserError::InvalidLanguage,
+        language_subtag("12").unwrap_err()
+    );
 }
 
 #[test]
 fn success_script_subtag() {
-    let result = script_subtag("Latn").unwrap();
-    assert_eq!(result, "Latn");
+    assert_eq!("Latn", script_subtag("Latn").unwrap());
 }
 
 #[test]
 fn fail_script_subtag() {
     // 3 character
-    let result = script_subtag("foo");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        script_subtag("foo").unwrap_err()
+    );
 
     // 5 characters
-    let result = script_subtag("Japan");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        script_subtag("Japan").unwrap_err()
+    );
 
     // not alphabet
-    let result = script_subtag("123");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        script_subtag("123").unwrap_err()
+    );
 }
 
 #[test]
 fn success_region_subtag() {
     // ascii alphabet
-    let result = region_subtag("JP").unwrap();
-    assert_eq!(result, "JP");
+    assert_eq!("JP", region_subtag("JP").unwrap());
 
     // 3 digit number
-    let result = region_subtag("001").unwrap();
-    assert_eq!(result, "001");
+    assert_eq!("001", region_subtag("001").unwrap());
 }
 
 #[test]
 fn fail_region_subtag() {
     // 1 character
-    let result = region_subtag("J");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(ParserError::InvalidSubtag, region_subtag("J").unwrap_err());
 
     // 3 ascii characters
-    let result = region_subtag("JPN");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        region_subtag("JPN").unwrap_err()
+    );
 
     // 4 digit characters
-    let result = region_subtag("1234");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        region_subtag("1234").unwrap_err()
+    );
 }
 
 #[test]
 fn success_variant_subtag() {
     // 4 characters with digit
-    let result = variant_subtag("1996").unwrap();
-    assert_eq!(result, "1996");
+    assert_eq!("1996", variant_subtag("1996").unwrap());
 
     // 4 characters with digit & alphabet
-    let result = variant_subtag("1ABC").unwrap();
-    assert_eq!(result, "1ABC");
+    assert_eq!("1ABC", variant_subtag("1ABC").unwrap());
 
     // 5 characters with alphabet and digit
-    let result = variant_subtag("abcd1").unwrap();
-    assert_eq!(result, "abcd1");
+    assert_eq!("abcd1", variant_subtag("abcd1").unwrap());
 
     // 8 characters with alphabet and digit
-    let result = variant_subtag("abcdefgh").unwrap();
-    assert_eq!(result, "abcdefgh");
+    assert_eq!("abcdefgh", variant_subtag("abcdefgh").unwrap());
 }
 
 #[test]
 fn fail_variant_subtag() {
     // 3 characters
-    let result = variant_subtag("abc");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        variant_subtag("abc").unwrap_err()
+    );
 
     // 9 characters
-    let result = variant_subtag("abcdefghi");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        variant_subtag("abcdefghi").unwrap_err()
+    );
 
     // 4 characters with alphabet
-    let result = variant_subtag("aBCD");
-    assert_eq!(result.err(), Some(ParserError::InvalidSubtag));
+    assert_eq!(
+        ParserError::InvalidSubtag,
+        variant_subtag("aBCD").unwrap_err()
+    );
 }

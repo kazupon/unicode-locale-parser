@@ -149,6 +149,10 @@ fn success_extension_kind_from_byte() {
     );
 }
 
+/**
+ * Unit tests
+ */
+
 #[test]
 fn fail_extension_kind_from_byte() {
     assert_eq!(
