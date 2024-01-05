@@ -1,21 +1,7 @@
 use crate::errors::ParserError;
 use crate::lang::UnicodeLanguageIdentifier;
-
-#[derive(Debug)]
-pub enum ExtensionType {
-    UnicodeLocale,
-    Transformed,
-    Pu,
-    Other,
-}
-
-#[derive(Debug)]
-pub struct Extensions {
-    pub values: Option<Vec<String>>,
-}
-
-#[derive(Debug)]
-pub struct KeyPair(String, String);
+use std::fmt::{self, Write};
+use std::iter::Peekable;
 
 #[derive(Debug)]
 pub struct UnicodeLocaleExtensions {
@@ -39,8 +25,104 @@ pub struct OtherExtensions {
     pub value: String,
 }
 
+#[warn(missing_docs)]
+#[derive(Debug, PartialEq, Eq)]
+pub enum ExtensionKind {
+    UnicodeLocale,
+    Transformed,
+    Pu,
+    Other(char),
+}
+
+impl ExtensionKind {
+    pub fn from_byte(key: u8) -> Result<Self, ParserError> {
+        let key = key.to_ascii_lowercase();
+        match key {
+            b'u' => Ok(ExtensionKind::UnicodeLocale),
+            b't' => Ok(ExtensionKind::Transformed),
+            b'x' => Ok(ExtensionKind::Pu),
+            other if other.is_ascii_alphabetic() => Ok(ExtensionKind::Other(char::from(other))),
+            _ => Err(ParserError::InvalidExtension),
+        }
+    }
+}
+
+impl fmt::Display for ExtensionKind {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let c = match self {
+            ExtensionKind::UnicodeLocale => 'u',
+            ExtensionKind::Transformed => 't',
+            ExtensionKind::Pu => 'x',
+            ExtensionKind::Other(c) => *c,
+        };
+        f.write_char(c)
+    }
+}
+
+#[derive(Debug)]
+pub struct Extensions {
+    pub values: Option<Vec<String>>,
+}
+
 pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> {
+    // check empty
+    if chunk.is_empty() {
+        return Err(ParserError::MissingLocale); // TODO:
+    }
+
+    let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();
+    parse_unicode_extensions_from_iter(&mut iter)
+}
+
+pub fn parse_unicode_extensions_from_iter<'a>(
+    iter: &mut Peekable<impl Iterator<Item = &'a str>>,
+) -> Result<Extensions, ParserError> {
     Ok(Extensions {
         values: Some(vec![]),
     })
+}
+
+/**
+ * Tests
+ */
+
+#[test]
+fn success_extension_kind_from_byte() {
+    assert_eq!(
+        ExtensionKind::UnicodeLocale,
+        ExtensionKind::from_byte(b'u').unwrap()
+    );
+    assert_eq!(
+        ExtensionKind::Transformed,
+        ExtensionKind::from_byte(b't').unwrap()
+    );
+    assert_eq!(
+        ExtensionKind::Transformed,
+        ExtensionKind::from_byte(b'T').unwrap()
+    );
+    assert_eq!(ExtensionKind::Pu, ExtensionKind::from_byte(b'x').unwrap());
+    assert_eq!(
+        ExtensionKind::Other('a'),
+        ExtensionKind::from_byte(b'a').unwrap()
+    );
+}
+
+#[test]
+fn fail_extension_kind_from_byte() {
+    assert_eq!(
+        ParserError::InvalidExtension,
+        ExtensionKind::from_byte(b'1').unwrap_err()
+    );
+    assert_eq!(
+        ParserError::InvalidExtension,
+        ExtensionKind::from_byte(b'!').unwrap_err()
+    );
+}
+
+#[test]
+fn extention_kind_display() {
+    assert_eq!("u", format!("{}", ExtensionKind::UnicodeLocale));
+    assert_eq!("t", format!("{}", ExtensionKind::Transformed));
+    assert_eq!("x", format!("{}", ExtensionKind::Pu));
+    assert_eq!("a", format!("{}", ExtensionKind::Other('a')));
 }
