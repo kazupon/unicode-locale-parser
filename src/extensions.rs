@@ -67,7 +67,7 @@ pub struct Extensions {
 pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> {
     // check empty
     if chunk.is_empty() {
-        return Err(ParserError::MissingLocale); // TODO:
+        return Err(ParserError::Missing); // TODO:
     }
 
     let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();

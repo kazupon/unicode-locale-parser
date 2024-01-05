@@ -10,7 +10,7 @@ pub struct UnicdeLocaleIdentifier {
 pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicdeLocaleIdentifier, ParserError> {
     // check empty
     if locale.is_empty() {
-        return Err(ParserError::MissingLocale);
+        return Err(ParserError::Missing);
     }
 
     let mut iter = locale.split(|c| c == '-' || c == '_').peekable();
@@ -22,13 +22,20 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicdeLocaleIdentifier, P
 #[test]
 fn success_parse_unicode_locale_id() {
     // full case
-    let result = parse_unicode_locale_id("en-Latn-US-macos").unwrap();
-    assert_eq!(result.language.to_string(), "en-Latn-US-macos");
+    assert_eq!(
+        "en-Latn-US-macos",
+        parse_unicode_locale_id("en-Latn-US-macos")
+            .unwrap()
+            .language
+            .to_string()
+    );
 }
 
 #[test]
 fn fail_parse_unicode_locale_id() {
     // missing locale
-    let result = parse_unicode_locale_id("");
-    assert_eq!(result.err(), Some(ParserError::MissingLocale));
+    assert_eq!(
+        ParserError::Missing,
+        parse_unicode_locale_id("").unwrap_err()
+    );
 }

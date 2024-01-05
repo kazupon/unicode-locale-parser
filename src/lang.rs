@@ -14,7 +14,7 @@ pub struct UnicodeLanguageIdentifier {
 pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifier, ParserError> {
     // check empty
     if chunk.is_empty() {
-        return Err(ParserError::MissingLanguage);
+        return Err(ParserError::Missing);
     }
 
     let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();
@@ -209,7 +209,7 @@ fn success_parse_unicode_language_id() {
 fn fail_parse_unicode_language_id() {
     // missing language
     let result = parse_unicode_language_id("");
-    assert_eq!(result.err(), Some(ParserError::MissingLanguage));
+    assert_eq!(result.err(), Some(ParserError::Missing));
 
     // remain subtags
     let result = parse_unicode_language_id("en-Latn-US-macos-macoswindows");
