@@ -21,7 +21,7 @@ impl fmt::Display for PuExtensions {
     }
 }
 
-pub fn pu_extensions<'a>(
+pub fn parse_pu_extensions<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<PuExtensions, ParserError> {
     // pu_extensions
@@ -57,13 +57,16 @@ use crate::utils::split_str;
 fn success_pu_extensions() {
     // full case
     let mut iter = split_str("abc-123").peekable();
-    assert_eq!(vec!["abc", "123"], pu_extensions(&mut iter).unwrap().values);
+    assert_eq!(
+        vec!["abc", "123"],
+        parse_pu_extensions(&mut iter).unwrap().values
+    );
 
     // Display trait implementation
     let mut iter = split_str("abc-123").peekable();
     assert_eq!(
         "x-abc-123",
-        format!("{}", pu_extensions(&mut iter).unwrap())
+        format!("{}", parse_pu_extensions(&mut iter).unwrap())
     );
 }
 
@@ -73,6 +76,6 @@ fn fail_pu_extensions() {
     let mut iter = split_str("abc-123456789").peekable();
     assert_eq!(
         ParserError::InvalidSubtag,
-        pu_extensions(&mut iter).unwrap_err()
+        parse_pu_extensions(&mut iter).unwrap_err()
     );
 }

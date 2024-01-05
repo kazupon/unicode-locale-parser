@@ -4,7 +4,7 @@ mod transformed;
 mod unicode_locale;
 
 pub use other::OtherExtensions;
-pub use pu::{pu_extensions, PuExtensions};
+pub use pu::{parse_pu_extensions, PuExtensions};
 pub use transformed::TransformedExtensions;
 pub use unicode_locale::UnicodeLocaleExtensions;
 
@@ -92,7 +92,7 @@ pub fn parse_unicode_extensions_from_iter<'a>(
                     // TODO:
                     unimplemented!("TODO: should be throw error")
                 }
-                pu = Some(pu_extensions(iter)?);
+                pu = Some(parse_pu_extensions(iter)?);
             }
             Some(Ok(ExtensionKind::Other(c))) => {
                 unimplemented!("TODO: other extensions")
