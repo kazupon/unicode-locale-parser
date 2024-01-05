@@ -7,6 +7,7 @@ pub enum ParserError {
     MissingLanguage,
     InvalidLanguage,
     InvalidSubtag,
+    MissingLocale,
     Unexpected,
 }
 
@@ -18,6 +19,7 @@ impl Display for ParserError {
             ParserError::MissingLanguage => "Missing language identifier",
             ParserError::InvalidLanguage => "Invalid language identifier",
             ParserError::InvalidSubtag => "Invalid language subtag",
+            ParserError::MissingLocale => "Missing locale identifier",
             ParserError::Unexpected => "Unexpected error",
         };
         f.write_str(value)
