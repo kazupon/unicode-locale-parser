@@ -1,7 +1,7 @@
 #![warn(rustdoc::missing_crate_level_docs)]
 
 use crate::errors::ParserError;
-use crate::lang::UnicodeLanguageId;
+use crate::lang::UnicodeLanguageIdentifier;
 
 pub mod errors;
 pub mod lang;
@@ -27,7 +27,7 @@ pub struct UnicodeExtension {
 #[derive(Debug)]
 pub struct TransformedExtension {
     pub fields: KeyPair,
-    pub lang: Option<UnicodeLanguageId>,
+    pub lang: Option<UnicodeLanguageIdentifier>,
 }
 
 #[derive(Debug)]
@@ -42,13 +42,13 @@ pub struct OtherExtension {
 
 #[derive(Debug)]
 pub struct UnicdeLocaleId {
-    pub lang: UnicodeLanguageId,
+    pub lang: UnicodeLanguageIdentifier,
     // pub extensions: Option(Some<Vec<ExtensionType>),
 }
 
 pub fn parse(locale: &str) -> Result<UnicdeLocaleId, ParserError> {
     Ok(UnicdeLocaleId {
-        lang: UnicodeLanguageId {
+        lang: UnicodeLanguageIdentifier {
             language: String::from("en"),
             script: None,
             region: None,

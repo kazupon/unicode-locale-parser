@@ -4,14 +4,14 @@ use std::fmt::{self, Write};
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
-pub struct UnicodeLanguageId {
+pub struct UnicodeLanguageIdentifier {
     pub language: String,
     pub script: Option<String>,
     pub region: Option<String>,
     pub variants: Option<Vec<String>>,
 }
 
-pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, ParserError> {
+pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifier, ParserError> {
     // check empty
     if chunk.is_empty() {
         return Err(ParserError::MissingLanguage);
@@ -77,7 +77,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
         Some(variants)
     };
 
-    Ok(UnicodeLanguageId {
+    Ok(UnicodeLanguageIdentifier {
         language,
         script,
         region,
@@ -85,7 +85,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageId, Parse
     })
 }
 
-impl fmt::Display for UnicodeLanguageId {
+impl fmt::Display for UnicodeLanguageIdentifier {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         self.language.fmt(f)?;
         if let Some(ref script) = self.script {
@@ -106,7 +106,7 @@ impl fmt::Display for UnicodeLanguageId {
     }
 }
 
-impl FromStr for UnicodeLanguageId {
+impl FromStr for UnicodeLanguageIdentifier {
     type Err = ParserError;
 
     fn from_str(source: &str) -> Result<Self, Self::Err> {
@@ -193,7 +193,7 @@ fn success_parse_unicode_language_id() {
     );
 
     // FromStr trait implementation
-    let result: UnicodeLanguageId = "en-Latn-US-macos".parse().unwrap();
+    let result: UnicodeLanguageIdentifier = "en-Latn-US-macos".parse().unwrap();
     assert_eq!(result.language, "en");
     assert_eq!(result.script, Some("Latn".to_string()));
     assert_eq!(result.region, Some("US".to_string()));
