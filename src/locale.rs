@@ -14,7 +14,7 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicdeLocaleIdentifier, P
     }
 
     let mut iter = locale.split(|c| c == '-' || c == '_').peekable();
-    let language = parse_unicode_language_id_from_iter(&mut iter)?;
+    let language = parse_unicode_language_id_from_iter(&mut iter, true)?;
 
     Ok(UnicdeLocaleIdentifier { language })
 }

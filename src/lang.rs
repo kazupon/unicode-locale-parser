@@ -11,6 +11,7 @@ pub struct UnicodeLanguageIdentifier {
     pub region: Option<String>,
     pub variants: Option<Vec<String>>,
 }
+
 pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifier, ParserError> {
     // check empty
     if chunk.is_empty() {
@@ -18,11 +19,12 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifie
     }
 
     let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();
-    parse_unicode_language_id_from_iter(&mut iter)
+    parse_unicode_language_id_from_iter(&mut iter, false)
 }
 
 pub fn parse_unicode_language_id_from_iter<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
+    extension: bool,
 ) -> Result<UnicodeLanguageIdentifier, ParserError> {
     // language subtag
     let language = if let Some(lang) = iter.next() {
@@ -70,7 +72,7 @@ pub fn parse_unicode_language_id_from_iter<'a>(
     }
 
     // check if there are any subtags left
-    if iter.peek().is_some() {
+    if !extension && iter.peek().is_some() {
         return Err(ParserError::InvalidSubtag);
     }
 
