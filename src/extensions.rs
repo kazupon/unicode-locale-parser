@@ -26,7 +26,7 @@ pub struct OtherExtensions {
 }
 
 #[warn(missing_docs)]
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum ExtensionKind {
     UnicodeLocale,
     Transformed,
@@ -41,7 +41,7 @@ impl ExtensionKind {
             b'u' => Ok(ExtensionKind::UnicodeLocale),
             b't' => Ok(ExtensionKind::Transformed),
             b'x' => Ok(ExtensionKind::Pu),
-            other if other.is_ascii_alphabetic() => Ok(ExtensionKind::Other(char::from(other))),
+            other if other.is_ascii_alphanumeric() => Ok(ExtensionKind::Other(char::from(other))),
             _ => Err(ParserError::InvalidExtension),
         }
     }
@@ -61,7 +61,10 @@ impl fmt::Display for ExtensionKind {
 
 #[derive(Debug)]
 pub struct Extensions {
-    pub values: Option<Vec<String>>,
+    pub unicode_locale: Option<UnicodeLocaleExtensions>,
+    pub transformed: Option<TransformedExtensions>,
+    pub pu: Option<PuExtensions>,
+    pub other: Option<OtherExtensions>,
 }
 
 pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> {
@@ -78,7 +81,10 @@ pub fn parse_unicode_extensions_from_iter<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<Extensions, ParserError> {
     Ok(Extensions {
-        values: Some(vec![]),
+        unicode_locale: None,
+        transformed: None,
+        pu: None,
+        other: None,
     })
 }
 
@@ -105,17 +111,21 @@ fn success_extension_kind_from_byte() {
         ExtensionKind::Other('a'),
         ExtensionKind::from_byte(b'a').unwrap()
     );
+    assert_eq!(
+        ExtensionKind::Other('1'),
+        ExtensionKind::from_byte(b'1').unwrap()
+    );
 }
 
 #[test]
 fn fail_extension_kind_from_byte() {
     assert_eq!(
         ParserError::InvalidExtension,
-        ExtensionKind::from_byte(b'1').unwrap_err()
+        ExtensionKind::from_byte(b'!').unwrap_err()
     );
     assert_eq!(
         ParserError::InvalidExtension,
-        ExtensionKind::from_byte(b'!').unwrap_err()
+        ExtensionKind::from_byte(b' ').unwrap_err()
     );
 }
 
