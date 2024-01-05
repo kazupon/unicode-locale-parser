@@ -1,5 +1,6 @@
 #![warn(rustdoc::missing_crate_level_docs)]
 
+mod constants;
 mod extensions;
 mod subtags;
 mod utils;

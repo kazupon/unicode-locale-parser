@@ -1,5 +1,6 @@
+use crate::constants::SEP;
 use crate::errors::ParserError;
-use crate::utils::split_str;
+use crate::extensions::ExtensionKind;
 
 use std::fmt::{self, Write};
 use std::iter::Peekable;
@@ -11,9 +12,9 @@ pub struct PuExtensions {
 
 impl fmt::Display for PuExtensions {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("x")?;
+        write!(f, "{}", ExtensionKind::Pu)?;
         for value in &self.values {
-            f.write_char('-')?;
+            f.write_char(SEP)?;
             f.write_str(value)?;
         }
         Ok(())
@@ -48,6 +49,9 @@ fn parse_value(subtag: &str) -> Result<&str, ParserError> {
 /**
  * Unit tests
  */
+
+#[allow(unused_imports)] // for unit tests
+use crate::utils::split_str;
 
 #[test]
 fn success_pu_extensions() {

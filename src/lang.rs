@@ -1,6 +1,8 @@
+use crate::constants::{LANG_UND, SEP};
 use crate::errors::ParserError;
 use crate::subtags::{language_subtag, region_subtag, script_subtag, variant_subtag};
 use crate::utils::split_str;
+
 use std::fmt::{self, Write};
 use std::iter::Peekable;
 use std::str::FromStr;
@@ -96,21 +98,21 @@ pub fn parse_unicode_language_id_from_iter<'a>(
 impl fmt::Display for UnicodeLanguageIdentifier {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.language.is_empty() {
-            f.write_str("und")?;
+            f.write_str(LANG_UND)?;
         } else {
             self.language.fmt(f)?;
         }
         if let Some(ref script) = self.script {
-            f.write_char('-')?;
+            f.write_char(SEP)?;
             script.fmt(f)?;
         }
         if let Some(ref region) = self.region {
-            f.write_char('-')?;
+            f.write_char(SEP)?;
             region.fmt(f)?;
         }
         if let Some(ref variants) = self.variants {
             for variant in variants.iter() {
-                f.write_char('-')?;
+                f.write_char(SEP)?;
                 variant.fmt(f)?;
             }
         }

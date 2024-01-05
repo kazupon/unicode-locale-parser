@@ -1,7 +1,5 @@
+use crate::constants::{LANG_EMPTY, LANG_ROOT, LANG_UND};
 use crate::errors::ParserError;
-
-const LANG_ROOT: &str = "root";
-const LANG_EMPTY: &str = "";
 
 pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_language_subtag
@@ -20,7 +18,7 @@ pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
         return Err(ParserError::InvalidLanguage);
     }
 
-    if "und" == subtag {
+    if LANG_UND == subtag {
         Ok(LANG_EMPTY)
     } else {
         Ok(subtag)
