@@ -92,7 +92,11 @@ pub fn parse_unicode_language_id_from_iter<'a>(
 
 impl fmt::Display for UnicodeLanguageIdentifier {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.language.fmt(f)?;
+        if self.language.is_empty() {
+            f.write_str("und")?;
+        } else {
+            self.language.fmt(f)?;
+        }
         if let Some(ref script) = self.script {
             f.write_char('-')?;
             script.fmt(f)?;
@@ -182,14 +186,23 @@ fn success_parse_unicode_language_id() {
 
     // language subtag: 'root'
     let result = parse_unicode_language_id("root").unwrap();
-    assert_eq!(result.language, "root");
+    assert_eq!(result.language, "");
     assert_eq!(result.script, None);
     assert_eq!(result.region, None);
     assert_eq!(result.variants, None);
 
+    // include language subtag: 'und'
+    let result = parse_unicode_language_id("und-Latn-AT-macos").unwrap();
+    assert_eq!(result.language, "");
+    assert_eq!(result.script, Some("Latn".to_string()));
+    assert_eq!(result.region, Some("AT".to_string()));
+    assert_eq!(result.variants, Some(vec!["macos".to_string()]));
+
     // Display trait implementation
     let result = parse_unicode_language_id("en-Latn-US-macos").unwrap();
     assert_eq!("en-Latn-US-macos", format!("{}", result));
+    let result = parse_unicode_language_id("und-Latn-US-macos").unwrap();
+    assert_eq!("und-Latn-US-macos", format!("{}", result));
 
     // PartialEq trait implementation
     assert_eq!(

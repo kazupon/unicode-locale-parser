@@ -1,29 +1,36 @@
 use crate::errors::ParserError;
 
 const LANG_ROOT: &str = "root";
+const LANG_EMPTY: &str = "";
 
 pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
+    // unicode_language_subtag
+    // https://unicode.org/reports/tr35/#unicode_language_subtag
+
+    // 'root' is a special case
     if LANG_ROOT.eq(subtag) {
-        // 'root' is a special case
-        Ok(LANG_ROOT)
+        return Ok(LANG_EMPTY);
+    }
+
+    let len = subtag.len();
+    if !(2..=8).contains(&len)
+        || len == 4
+        || !subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic())
+    {
+        return Err(ParserError::InvalidLanguage);
+    }
+
+    if "und" == subtag {
+        Ok(LANG_EMPTY)
     } else {
-        // unicode_language_subtag
-        // https://unicode.org/reports/tr35/#unicode_language_subtag
-        let len = subtag.len();
-        if !(2..=8).contains(&len)
-            || len == 4
-            || !subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic())
-        {
-            Err(ParserError::InvalidLanguage)
-        } else {
-            Ok(subtag)
-        }
+        Ok(subtag)
     }
 }
 
 pub fn script_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_script_subtag
     // https://unicode.org/reports/tr35/#unicode_script_subtag
+
     let len = subtag.len();
     if len != 4 || !subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic()) {
         Err(ParserError::InvalidSubtag)
@@ -35,6 +42,7 @@ pub fn script_subtag(subtag: &str) -> Result<&str, ParserError> {
 pub fn region_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_region_subtag
     // https://unicode.org/reports/tr35/#unicode_region_subtag
+
     let len = subtag.len();
     if (len == 2 && subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic()))
         || (len == 3 && subtag.as_bytes().iter().all(|b| b.is_ascii_digit()))
@@ -48,6 +56,7 @@ pub fn region_subtag(subtag: &str) -> Result<&str, ParserError> {
 pub fn variant_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_variant_subtag
     // https://unicode.org/reports/tr35/#unicode_variant_subtag
+
     let len = subtag.len();
     if !(4..=8).contains(&len) {
         return Err(ParserError::InvalidSubtag);
@@ -74,11 +83,19 @@ pub fn variant_subtag(subtag: &str) -> Result<&str, ParserError> {
 fn success_language_subtag() {
     // 'root'
     let result = language_subtag("root").unwrap();
-    assert_eq!(result, "root");
+    assert_eq!(result, LANG_EMPTY);
 
     // language subtag only
     let result = language_subtag("en").unwrap();
     assert_eq!(result, "en");
+
+    // 3 characters
+    let result = language_subtag("jpn").unwrap();
+    assert_eq!(result, "jpn");
+
+    // 'und'
+    let result = language_subtag("und").unwrap();
+    assert_eq!(result, LANG_EMPTY);
 }
 
 #[test]
