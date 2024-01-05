@@ -18,7 +18,7 @@ impl Display for ParserError {
         let value = match self {
             ParserError::MissingLanguage => "Missing language identifier",
             ParserError::InvalidLanguage => "Invalid language identifier",
-            ParserError::InvalidSubtag => "Invalid language subtag",
+            ParserError::InvalidSubtag => "Invalid subtag",
             ParserError::MissingLocale => "Missing locale identifier",
             ParserError::Unexpected => "Unexpected error",
         };
