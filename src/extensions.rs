@@ -3,7 +3,7 @@ mod pu;
 mod transformed;
 mod unicode_locale;
 
-pub use other::OtherExtensions;
+pub use other::{parse_other_extensions, OtherExtensions};
 pub use pu::{parse_pu_extensions, PuExtensions};
 pub use transformed::TransformedExtensions;
 pub use unicode_locale::UnicodeLocaleExtensions;
@@ -95,7 +95,7 @@ pub fn parse_unicode_extensions_from_iter<'a>(
                 pu = Some(parse_pu_extensions(iter)?);
             }
             Some(Ok(ExtensionKind::Other(c))) => {
-                unimplemented!("TODO: other extensions")
+                other.push(parse_other_extensions(iter, c)?);
             }
             None => {}
             _ => unreachable!(),
@@ -135,8 +135,18 @@ pub fn parse_unicode_extensions_from_iter<'a>(
 
 #[test]
 fn success_parse_unicode_extensions() {
-    let extensions = parse_unicode_extensions("x-foo-123").unwrap();
-    assert_eq!("x-foo-123", format!("{}", extensions.pu.unwrap()));
+    let extensions = parse_unicode_extensions("a-vue-rust-x-foo-123").unwrap();
+    let other = extensions.other.unwrap();
+    assert_eq!(
+        ["a-vue-rust"],
+        other
+            .iter()
+            .map(|o| format!("{}", o))
+            .collect::<Vec<String>>()
+            .as_slice()
+    );
+    let pu = extensions.pu.unwrap();
+    assert_eq!("x-foo-123", format!("{}", pu));
 }
 
 #[test]
