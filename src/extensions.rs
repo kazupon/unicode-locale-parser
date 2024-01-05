@@ -1,30 +1,16 @@
+mod other;
+mod pu;
+mod transformed;
+mod unicode_locale;
+
+pub use other::OtherExtensions;
+pub use pu::PuExtensions;
+pub use transformed::TransformedExtensions;
+pub use unicode_locale::UnicodeLocaleExtensions;
+
 use crate::errors::ParserError;
-use crate::lang::UnicodeLanguageIdentifier;
-use crate::subtags;
 use std::fmt::{self, Write};
 use std::iter::Peekable;
-
-#[derive(Debug)]
-pub struct UnicodeLocaleExtensions {
-    pub keyword: Vec<String>,
-    pub attribute: Vec<String>,
-}
-
-#[derive(Debug)]
-pub struct TransformedExtensions {
-    pub tlang: Option<UnicodeLanguageIdentifier>,
-    pub tfield: Vec<String>,
-}
-
-#[derive(Debug)]
-pub struct PuExtensions {
-    pub value: String,
-}
-
-#[derive(Debug)]
-pub struct OtherExtensions {
-    pub value: String,
-}
 
 #[warn(missing_docs)]
 #[derive(Debug, PartialEq)]
@@ -62,10 +48,10 @@ impl fmt::Display for ExtensionKind {
 
 #[derive(Debug)]
 pub struct Extensions {
-    pub unicode_locale: Option<UnicodeLocaleExtensions>,
-    pub transformed: Option<TransformedExtensions>,
+    pub unicode_locale: Option<Vec<UnicodeLocaleExtensions>>,
+    pub transformed: Option<Vec<TransformedExtensions>>,
+    pub other: Option<Vec<OtherExtensions>>,
     pub pu: Option<PuExtensions>,
-    pub other: Option<OtherExtensions>,
 }
 
 pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> {
@@ -81,10 +67,10 @@ pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> 
 pub fn parse_unicode_extensions_from_iter<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<Extensions, ParserError> {
-    let mut unicode_locale = None;
-    let mut transformed = None;
+    let mut unicode_locale = vec![];
+    let mut transformed = vec![];
+    let mut other = vec![];
     let mut pu = None;
-    let mut other = None;
 
     let mut chunk = iter.next();
     while let Some(subtag) = chunk {
@@ -111,6 +97,23 @@ pub fn parse_unicode_extensions_from_iter<'a>(
 
         chunk = iter.next();
     }
+
+    // normalize unicode locale extensions
+    let unicode_locale = if unicode_locale.is_empty() {
+        None
+    } else {
+        Some(unicode_locale)
+    };
+
+    // normalize transformed extensions
+    let transformed = if transformed.is_empty() {
+        None
+    } else {
+        Some(transformed)
+    };
+
+    // normalize other extensions
+    let other = if other.is_empty() { None } else { Some(other) };
 
     Ok(Extensions {
         unicode_locale,
