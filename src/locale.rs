@@ -1,5 +1,6 @@
 use crate::errors::ParserError;
 use crate::lang::{parse_unicode_language_id_from_iter, UnicodeLanguageIdentifier};
+use crate::utils::split_str;
 
 #[derive(Debug)]
 pub struct UnicdeLocaleIdentifier {
@@ -13,7 +14,7 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicdeLocaleIdentifier, P
         return Err(ParserError::Missing);
     }
 
-    let mut iter = locale.split(|c| c == '-' || c == '_').peekable();
+    let mut iter = split_str(locale).peekable();
     let language = parse_unicode_language_id_from_iter(&mut iter, true)?;
 
     Ok(UnicdeLocaleIdentifier { language })

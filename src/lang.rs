@@ -1,5 +1,6 @@
 use crate::errors::ParserError;
 use crate::subtags::{language_subtag, region_subtag, script_subtag, variant_subtag};
+use crate::utils::split_str;
 use std::fmt::{self, Write};
 use std::iter::Peekable;
 use std::str::FromStr;
@@ -18,7 +19,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifie
         return Err(ParserError::Missing);
     }
 
-    let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();
+    let mut iter = split_str(chunk).peekable();
     parse_unicode_language_id_from_iter(&mut iter, false)
 }
 

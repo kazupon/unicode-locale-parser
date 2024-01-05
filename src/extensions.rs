@@ -9,6 +9,8 @@ pub use transformed::TransformedExtensions;
 pub use unicode_locale::UnicodeLocaleExtensions;
 
 use crate::errors::ParserError;
+use crate::utils::split_str;
+
 use std::fmt::{self, Write};
 use std::iter::Peekable;
 
@@ -60,7 +62,7 @@ pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> 
         return Err(ParserError::Missing); // TODO:
     }
 
-    let mut iter = chunk.split(|c| c == '-' || c == '_').peekable();
+    let mut iter = split_str(chunk).peekable();
     parse_unicode_extensions_from_iter(&mut iter)
 }
 
