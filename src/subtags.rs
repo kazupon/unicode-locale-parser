@@ -1,6 +1,11 @@
 use crate::constants::{LANG_EMPTY, LANG_ROOT, LANG_UND};
 use crate::errors::ParserError;
 
+pub fn is_language_subtag(subtag: &[u8]) -> bool {
+    let len = subtag.len();
+    (2..=8).contains(&len) && len != 4 && subtag.iter().all(|b| b.is_ascii_alphabetic())
+}
+
 pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
     // unicode_language_subtag
     // https://unicode.org/reports/tr35/#unicode_language_subtag
@@ -10,11 +15,7 @@ pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
         return Ok(LANG_EMPTY);
     }
 
-    let len = subtag.len();
-    if !(2..=8).contains(&len)
-        || len == 4
-        || !subtag.as_bytes().iter().all(|b| b.is_ascii_alphabetic())
-    {
+    if !is_language_subtag(subtag.as_bytes()) {
         return Err(ParserError::InvalidLanguage);
     }
 
