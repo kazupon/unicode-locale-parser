@@ -32,7 +32,7 @@ impl fmt::Display for UnicodeLocaleExtensions {
 }
 
 pub fn parse_unicode_locale_extensions<'a>(
-    mut iter: &mut Peekable<impl Iterator<Item = &'a str>>,
+    iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<UnicodeLocaleExtensions, ParserError> {
     // unicode_locale_extensions
     // https://unicode.org/reports/tr35/#unicode_locale_extensions

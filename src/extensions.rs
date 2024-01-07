@@ -3,10 +3,10 @@ mod pu;
 mod transformed;
 mod unicode_locale;
 
-pub use other::{parse_other_extensions, OtherExtensions};
-pub use pu::{parse_pu_extensions, PuExtensions};
-pub use transformed::{parse_transformed_extensions, TransformedExtensions};
-pub use unicode_locale::{parse_unicode_locale_extensions, UnicodeLocaleExtensions};
+use other::{parse_other_extensions, OtherExtensions};
+use pu::{parse_pu_extensions, PuExtensions};
+use transformed::{parse_transformed_extensions, TransformedExtensions};
+use unicode_locale::{parse_unicode_locale_extensions, UnicodeLocaleExtensions};
 
 use crate::constants::SEP;
 use crate::errors::ParserError;
@@ -15,9 +15,8 @@ use crate::utils::split_str;
 use std::fmt::{self, Write};
 use std::iter::Peekable;
 
-#[warn(missing_docs)]
 #[derive(Debug, PartialEq)]
-pub enum ExtensionKind {
+enum ExtensionKind {
     UnicodeLocale,
     Transformed,
     Pu,
@@ -25,7 +24,7 @@ pub enum ExtensionKind {
 }
 
 impl ExtensionKind {
-    pub fn from_byte(key: u8) -> Result<Self, ParserError> {
+    fn from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
             b'u' => Ok(ExtensionKind::UnicodeLocale),
