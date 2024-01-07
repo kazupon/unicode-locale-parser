@@ -73,7 +73,7 @@ pub fn parse_transformed_extensions<'a>(
             tvalue.push(subtag.to_string());
             iter.next();
         } else if is_language_subtag(subtag_bytes) {
-            tlang = Some(parse_unicode_language_id_from_iter(&mut iter, true)?);
+            tlang = Some(parse_unicode_language_id_from_iter(&mut iter)?);
         } else {
             return Err(ParserError::InvalidSubtag);
         }

@@ -29,7 +29,7 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicodeLocaleIdentifier, 
     }
 
     let mut iter = split_str(locale).peekable();
-    let language = parse_unicode_language_id_from_iter(&mut iter, true)?;
+    let language = parse_unicode_language_id_from_iter(&mut iter)?;
     let extensions = parse_extensions_from_iter(&mut iter)?;
 
     Ok(UnicodeLocaleIdentifier {

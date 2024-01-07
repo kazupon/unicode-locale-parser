@@ -22,12 +22,11 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifie
     }
 
     let mut iter = split_str(chunk).peekable();
-    parse_unicode_language_id_from_iter(&mut iter, false)
+    parse_unicode_language_id_from_iter(&mut iter)
 }
 
 pub fn parse_unicode_language_id_from_iter<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
-    extension: bool,
 ) -> Result<UnicodeLanguageIdentifier, ParserError> {
     // language subtag
     let language = if let Some(lang) = iter.next() {
@@ -72,11 +71,6 @@ pub fn parse_unicode_language_id_from_iter<'a>(
             break;
         }
         iter.next();
-    }
-
-    // check if there are any subtags left
-    if !extension && iter.peek().is_some() {
-        return Err(ParserError::InvalidSubtag);
     }
 
     // normalize variants
@@ -236,11 +230,5 @@ fn fail_parse_unicode_language_id() {
     assert_eq!(
         ParserError::Missing,
         parse_unicode_language_id("").unwrap_err()
-    );
-
-    // remain subtags
-    assert_eq!(
-        ParserError::InvalidSubtag,
-        parse_unicode_language_id("en-Latn-US-macos-macoswindows").unwrap_err()
     );
 }
