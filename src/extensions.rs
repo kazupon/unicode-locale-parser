@@ -91,8 +91,7 @@ pub fn parse_extensions(chunk: &str) -> Result<Extensions, ParserError> {
         return Err(ParserError::Missing);
     }
 
-    let mut iter = split_str(chunk).peekable();
-    parse_extensions_from_iter(&mut iter)
+    parse_extensions_from_iter(&mut split_str(chunk).peekable())
 }
 
 pub fn parse_extensions_from_iter<'a>(

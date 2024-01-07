@@ -21,8 +21,7 @@ pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifie
         return Err(ParserError::Missing);
     }
 
-    let mut iter = split_str(chunk).peekable();
-    parse_unicode_language_id_from_iter(&mut iter)
+    parse_unicode_language_id_from_iter(&mut split_str(chunk).peekable())
 }
 
 pub fn parse_unicode_language_id_from_iter<'a>(
