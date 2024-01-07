@@ -5,9 +5,10 @@ mod unicode_locale;
 
 pub use other::{parse_other_extensions, OtherExtensions};
 pub use pu::{parse_pu_extensions, PuExtensions};
-pub use transformed::TransformedExtensions;
-pub use unicode_locale::UnicodeLocaleExtensions;
+pub use transformed::{parse_transformed_extensions, TransformedExtensions};
+pub use unicode_locale::{parse_unicode_locale_extensions, UnicodeLocaleExtensions};
 
+use crate::constants::SEP;
 use crate::errors::ParserError;
 use crate::utils::split_str;
 
@@ -56,17 +57,46 @@ pub struct Extensions {
     pub pu: Option<PuExtensions>,
 }
 
-pub fn parse_unicode_extensions(chunk: &str) -> Result<Extensions, ParserError> {
+impl fmt::Display for Extensions {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut messages = vec![];
+        if let Some(unicode_locale) = &self.unicode_locale {
+            for u in unicode_locale {
+                messages.push(format!("{}", u));
+            }
+        }
+        if let Some(transformed) = &self.transformed {
+            for t in transformed {
+                messages.push(format!("{}", t));
+            }
+        }
+        if let Some(other) = &self.other {
+            for o in other {
+                messages.push(format!("{}", o));
+            }
+        }
+        if let Some(pu) = &self.pu {
+            messages.push(format!("{}", pu));
+        }
+
+        if !messages.is_empty() {
+            f.write_str(&messages.join(&SEP.to_string()))?;
+        }
+        Ok(())
+    }
+}
+
+pub fn parse_extensions(chunk: &str) -> Result<Extensions, ParserError> {
     // check empty
     if chunk.is_empty() {
-        return Err(ParserError::Missing); // TODO:
+        return Err(ParserError::Missing);
     }
 
     let mut iter = split_str(chunk).peekable();
-    parse_unicode_extensions_from_iter(&mut iter)
+    parse_extensions_from_iter(&mut iter)
 }
 
-pub fn parse_unicode_extensions_from_iter<'a>(
+pub fn parse_extensions_from_iter<'a>(
     iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<Extensions, ParserError> {
     let mut unicode_locale = vec![];
@@ -82,15 +112,14 @@ pub fn parse_unicode_extensions_from_iter<'a>(
             .map(|c| ExtensionKind::from_byte(*c))
         {
             Some(Ok(ExtensionKind::UnicodeLocale)) => {
-                unimplemented!("TODO: unicode locale extensions")
+                unicode_locale.push(parse_unicode_locale_extensions(iter)?);
             }
             Some(Ok(ExtensionKind::Transformed)) => {
-                unimplemented!("TODO: transformed extensions")
+                transformed.push(parse_transformed_extensions(iter)?);
             }
             Some(Ok(ExtensionKind::Pu)) => {
                 if pu.is_some() {
-                    // TODO:
-                    unimplemented!("TODO: should be throw error")
+                    return Err(ParserError::Unexpected);
                 }
                 pu = Some(parse_pu_extensions(iter)?);
             }
@@ -134,8 +163,30 @@ pub fn parse_unicode_extensions_from_iter<'a>(
  */
 
 #[test]
-fn success_parse_unicode_extensions() {
-    let extensions = parse_unicode_extensions("a-vue-rust-x-foo-123").unwrap();
+fn success_parse_extensions() {
+    // basic
+    let extensions = parse_extensions(
+        "U-attr1-kz-value2-t-en-Latn-US-macos-t1-value1-value2-a-vue-rust-x-foo-123",
+    )
+    .unwrap();
+    let unicode_locale = extensions.unicode_locale.unwrap();
+    assert_eq!(
+        ["u-attr1-kz-value2"],
+        unicode_locale
+            .iter()
+            .map(|u| format!("{}", u))
+            .collect::<Vec<String>>()
+            .as_slice()
+    );
+    let transformed = extensions.transformed.unwrap();
+    assert_eq!(
+        ["t-en-Latn-US-macos-t1-value1-value2"],
+        transformed
+            .iter()
+            .map(|t| format!("{}", t))
+            .collect::<Vec<String>>()
+            .as_slice()
+    );
     let other = extensions.other.unwrap();
     assert_eq!(
         ["a-vue-rust"],
@@ -147,15 +198,24 @@ fn success_parse_unicode_extensions() {
     );
     let pu = extensions.pu.unwrap();
     assert_eq!("x-foo-123", format!("{}", pu));
+
+    // Display trait implementation
+    assert_eq!(
+        "u-attr1-kz-value2-t-en-Latn-US-macos-t1-value1-value2-a-vue-rust-x-foo-123",
+        format!(
+            "{}",
+            parse_extensions(
+                "U-attr1-kz-value2-t-en-Latn-US-macos-t1-value1-value2-a-vue-rust-x-foo-123",
+            )
+            .unwrap()
+        )
+    );
 }
 
 #[test]
 fn fail_parse_unicode_extensions() {
     // missing locale
-    assert_eq!(
-        ParserError::Missing,
-        parse_unicode_extensions("").unwrap_err()
-    );
+    assert_eq!(ParserError::Missing, parse_extensions("").unwrap_err());
 }
 
 #[test]
