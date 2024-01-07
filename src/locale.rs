@@ -7,12 +7,12 @@ use crate::shared::split_str;
 use std::fmt::{self};
 
 #[derive(Debug)]
-pub struct UnicdeLocaleIdentifier {
+pub struct UnicodeLocaleIdentifier {
     pub language: UnicodeLanguageIdentifier,
     pub extensions: Extensions,
 }
 
-impl fmt::Display for UnicdeLocaleIdentifier {
+impl fmt::Display for UnicodeLocaleIdentifier {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut messages = vec![];
         messages.push(format!("{}", self.language));
@@ -22,7 +22,7 @@ impl fmt::Display for UnicdeLocaleIdentifier {
     }
 }
 
-pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicdeLocaleIdentifier, ParserError> {
+pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicodeLocaleIdentifier, ParserError> {
     // check empty
     if locale.is_empty() {
         return Err(ParserError::Missing);
@@ -32,7 +32,7 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicdeLocaleIdentifier, P
     let language = parse_unicode_language_id_from_iter(&mut iter, true)?;
     let extensions = parse_extensions_from_iter(&mut iter)?;
 
-    Ok(UnicdeLocaleIdentifier {
+    Ok(UnicodeLocaleIdentifier {
         language,
         extensions,
     })

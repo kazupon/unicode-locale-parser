@@ -1,7 +1,7 @@
-mod other;
-mod pu;
-mod transformed;
-mod unicode_locale;
+pub mod other;
+pub mod pu;
+pub mod transformed;
+pub mod unicode_locale;
 
 use other::{parse_other_extensions, OtherExtensions};
 use pu::{parse_pu_extensions, PuExtensions};
