@@ -109,6 +109,12 @@ fn success_parse_unicode_subdivision_id() {
 
 #[test]
 fn fail_parse_unicode_subdivision_id() {
+    // missing
+    assert_eq!(
+        ParserError::Missing,
+        parse_unicode_subdivision_id("").unwrap_err()
+    );
+
     // 2 characters
     assert_eq!(
         ParserError::InvalidSubdivision,
