@@ -1,7 +1,7 @@
 use crate::constants::{LANG_UND, SEP};
 use crate::errors::ParserError;
+use crate::shared::split_str;
 use crate::subtags::{language_subtag, region_subtag, script_subtag, variant_subtag};
-use crate::utils::split_str;
 
 use std::fmt::{self, Write};
 use std::iter::Peekable;

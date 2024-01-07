@@ -96,7 +96,7 @@ pub fn parse_unicode_locale_extensions<'a>(
  */
 
 #[allow(unused_imports)] // for unit tests
-use crate::utils::split_str;
+use crate::shared::split_str;
 
 #[test]
 fn success_unicode_locale_extensions() {

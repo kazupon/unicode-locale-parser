@@ -10,7 +10,7 @@ use unicode_locale::{parse_unicode_locale_extensions, UnicodeLocaleExtensions};
 
 use crate::constants::SEP;
 use crate::errors::ParserError;
-use crate::utils::split_str;
+use crate::shared::split_str;
 
 use std::fmt::{self, Write};
 use std::iter::Peekable;

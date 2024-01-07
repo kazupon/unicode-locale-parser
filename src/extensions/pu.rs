@@ -51,7 +51,7 @@ fn parse_value(subtag: &str) -> Result<&str, ParserError> {
  */
 
 #[allow(unused_imports)] // for unit tests
-use crate::utils::split_str;
+use crate::shared::split_str;
 
 #[test]
 fn success_pu_extensions() {
