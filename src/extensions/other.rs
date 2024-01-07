@@ -41,10 +41,12 @@ pub fn parse_other_extensions<'a>(
     Ok(OtherExtensions { values, extension })
 }
 
+fn is_other_value_subtag(subtag: &[u8]) -> bool {
+    (2..=8).contains(&subtag.len()) && subtag.iter().all(|c| c.is_ascii_alphanumeric())
+}
+
 fn parse_value(subtag: &str) -> Result<&str, ParserError> {
-    if !(2..=8).contains(&subtag.len())
-        || !subtag.as_bytes().iter().all(|c| c.is_ascii_alphanumeric())
-    {
+    if !is_other_value_subtag(subtag.as_bytes()) {
         Err(ParserError::InvalidSubtag)
     } else {
         Ok(subtag)

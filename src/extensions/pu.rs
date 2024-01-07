@@ -35,11 +35,12 @@ pub fn parse_pu_extensions<'a>(
     Ok(PuExtensions { values })
 }
 
+fn is_pu_value_subtag(subtag: &[u8]) -> bool {
+    (1..=8).contains(&subtag.len()) && subtag.iter().all(|c| c.is_ascii_alphanumeric())
+}
+
 fn parse_value(subtag: &str) -> Result<&str, ParserError> {
-    if subtag.is_empty()
-        || subtag.len() > 8
-        || !subtag.as_bytes().iter().all(|c| c.is_ascii_alphanumeric())
-    {
+    if !is_pu_value_subtag(subtag.as_bytes()) {
         Err(ParserError::InvalidSubtag)
     } else {
         Ok(subtag)
