@@ -80,9 +80,9 @@ fn region_index(chunk: &[u8]) -> Result<usize, ParserError> {
 #[test]
 fn success_parse_unicode_subdivision_id() {
     // alpha region + suffix
-    let subdivision = parse_unicode_subdivision_id("abab1").unwrap();
-    assert_eq!("ab", subdivision.region);
-    assert_eq!("ab1", subdivision.suffix);
+    let subdivision = parse_unicode_subdivision_id("ussct").unwrap();
+    assert_eq!("us", subdivision.region);
+    assert_eq!("sct", subdivision.suffix);
 
     // digit region + suffix
     let subdivision = parse_unicode_subdivision_id("123abcd").unwrap();
@@ -102,9 +102,9 @@ fn success_parse_unicode_subdivision_id() {
     );
 
     // FromStr trait implementation
-    let subdivision: UnicodeSubdivisionIdentifier = "123abcd".parse().unwrap();
-    assert_eq!("123", subdivision.region);
-    assert_eq!("abcd", subdivision.suffix);
+    let subdivision: UnicodeSubdivisionIdentifier = "ussct".parse().unwrap();
+    assert_eq!("us", subdivision.region);
+    assert_eq!("sct", subdivision.suffix);
 }
 
 #[test]
