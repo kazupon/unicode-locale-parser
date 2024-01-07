@@ -38,6 +38,10 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicodeLocaleIdentifier, 
     })
 }
 
+/*
+ * Unit tests
+ */
+
 #[test]
 fn success_parse_unicode_locale_id() {
     // full case

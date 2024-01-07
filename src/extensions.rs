@@ -210,6 +210,10 @@ fn success_parse_extensions() {
     );
 }
 
+/*
+ * Unit tests
+ */
+
 #[test]
 fn fail_parse_unicode_extensions() {
     // missing locale

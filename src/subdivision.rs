@@ -77,6 +77,10 @@ fn region_index(chunk: &[u8]) -> Result<usize, ParserError> {
     }
 }
 
+/*
+ * Unit tests
+ */
+
 #[test]
 fn success_parse_unicode_subdivision_id() {
     // alpha region + suffix
