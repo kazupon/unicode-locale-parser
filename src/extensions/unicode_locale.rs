@@ -70,7 +70,7 @@ pub fn parse_unicode_locale_extensions<'a>(
                 uvalue.push(subtag.to_string());
             } else {
                 // for attribute
-                uvalue.push(subtag.to_string());
+                attribute.push(subtag.to_string());
             }
             iter.next();
         } else {
@@ -101,23 +101,21 @@ use crate::utils::split_str;
 #[test]
 fn success_unicode_locale_extensions() {
     // basic case
-    let mut iter = split_str("1k-value1-attr-ky-value2").peekable();
-    assert_eq!(
-        "u-1k-value1-attr-ky-value2",
-        format!("{}", parse_unicode_locale_extensions(&mut iter).unwrap())
-    );
+    let mut iter = split_str("attr1-ky-value1").peekable();
+    let result = parse_unicode_locale_extensions(&mut iter).unwrap();
+    assert_eq!("u-attr1-ky-value1", format!("{}", result));
 
     // no attribute
-    let mut iter = split_str("1k-value1-ky-value2").peekable();
+    let mut iter = split_str("ky-value1").peekable();
     assert_eq!(
-        "u-1k-value1-ky-value2",
+        "u-ky-value1",
         format!("{}", parse_unicode_locale_extensions(&mut iter).unwrap())
     );
 
     // attribute multiple
-    let mut iter = split_str("1k-value1-attr1-attr2-ky-value2").peekable();
+    let mut iter = split_str("attr1-attr2-ky-value1").peekable();
     assert_eq!(
-        "u-1k-value1-attr1-attr2-ky-value2",
+        "u-attr1-attr2-ky-value1",
         format!("{}", parse_unicode_locale_extensions(&mut iter).unwrap())
     );
 
