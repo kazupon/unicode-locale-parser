@@ -25,38 +25,58 @@ impl FromStr for UnicodeSubdivisionIdentifier {
     }
 }
 
+/// Parse the given string as a Unicode Subdivision Identifier.
+///
+/// This function parses according to [`unicode_subdivision_id` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_subdivision_id)
+///
+/// # Examples
+///
+/// ```
+/// use unicode_locale_parser::parse_subdivision_id;
+///
+/// let subdivision = parse_subdivision_id("ussct").unwrap();
+/// assert_eq!("us", subdivision.region);
+/// assert_eq!("sct", subdivision.suffix);
+/// ```
+///
+/// # Errors
+///
+/// This function returns an error in the following cases:
+///
+/// - [`ParserError::Missing`] if the given subdivision id is empty.
+/// - [`ParserError::InvalidSubdivision`] if the given subdivision id is not a valid subdivision identifier.
 pub fn parse_unicode_subdivision_id(
-    chunk: &str,
+    subdivision_id: &str,
 ) -> Result<UnicodeSubdivisionIdentifier, ParserError> {
     // unicode_subdivision_id
     // https://unicode.org/reports/tr35/#unicode_subdivision_id
 
-    let chunk = chunk.as_bytes();
+    let chunks = subdivision_id.as_bytes();
 
-    if chunk.is_empty() {
+    if chunks.is_empty() {
         return Err(ParserError::Missing);
     }
 
-    let len = chunk.len();
+    let len = chunks.len();
     if !(2..=7).contains(&len) {
         return Err(ParserError::InvalidSubdivision);
     }
 
-    let region_index = region_index(chunk)?;
-    let region = match str::from_utf8(&chunk[0..region_index]) {
+    let region_index = region_index(chunks)?;
+    let region = match str::from_utf8(&chunks[0..region_index]) {
         Ok(s) => s,
         Err(_) => return Err(ParserError::Unexpected),
     };
 
     let suffix_len = len - region_index;
     if !(3..7).contains(&suffix_len)
-        || !chunk[region_index..]
+        || !chunks[region_index..]
             .iter()
             .all(|b: &u8| b.is_ascii_alphanumeric())
     {
         Err(ParserError::InvalidSubdivision)
     } else {
-        let suffix = match str::from_utf8(&chunk[region_index..]) {
+        let suffix = match str::from_utf8(&chunks[region_index..]) {
             Ok(s) => s,
             Err(_) => return Err(ParserError::Unexpected),
         };
@@ -67,10 +87,10 @@ pub fn parse_unicode_subdivision_id(
     }
 }
 
-fn region_index(chunk: &[u8]) -> Result<usize, ParserError> {
-    if chunk[0..2].iter().all(|b| b.is_ascii_alphabetic()) {
+fn region_index(chunks: &[u8]) -> Result<usize, ParserError> {
+    if chunks[0..2].iter().all(|b| b.is_ascii_alphabetic()) {
         Ok(2)
-    } else if chunk[0..3].iter().all(|b| b.is_ascii_digit()) {
+    } else if chunks[0..3].iter().all(|b| b.is_ascii_digit()) {
         Ok(3)
     } else {
         Err(ParserError::InvalidSubdivision)
