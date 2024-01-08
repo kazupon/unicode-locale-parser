@@ -35,13 +35,42 @@ impl FromStr for UnicodeLocaleIdentifier {
     }
 }
 
-pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicodeLocaleIdentifier, ParserError> {
+/// Parse the given string as a Unicode Locale Identifier.
+///
+/// This function parses according to [`unicode_locale_id` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_locale_id)
+///
+/// # Examples
+///
+/// ```
+/// use unicode_locale_parser::parse_locale_id;
+///
+/// let locale = parse_locale_id("en-US-u-hc-h12").unwrap();
+/// assert_eq!("en", locale.language.language);
+/// assert_eq!(None, locale.language.script);
+/// assert_eq!(Some("US".to_string()), locale.language.region);
+/// assert_eq!(None, locale.language.variants);
+/// let u = locale.extensions.unicode_locale.unwrap();
+/// assert_eq!(
+///     &vec!["h12".to_string()],
+///     u.get(0).unwrap().ufield.get("hc").unwrap()
+/// );
+/// ```
+///
+/// # Errors
+///
+/// This function returns an error in the following cases:
+///
+/// - [`ParserError::Missing`] if the given locale id is empty.
+/// - [`ParserError::InvalidLanguage`] if the given locale id is not a valid language identifier.
+/// - [`ParserError::InvalidSubtag`] if the given locale id is not a valid subtag.
+/// - [`ParserError::InvalidExtension`] if the given locale id is not a valid unicode extensions
+pub fn parse_unicode_locale_id(locale_id: &str) -> Result<UnicodeLocaleIdentifier, ParserError> {
     // check empty
-    if locale.is_empty() {
+    if locale_id.is_empty() {
         return Err(ParserError::Missing);
     }
 
-    let mut iter = split_str(locale).peekable();
+    let mut iter = split_str(locale_id).peekable();
     let language = parse_unicode_language_id_from_iter(&mut iter)?;
     let extensions = parse_extensions_from_iter(&mut iter)?;
 
@@ -57,6 +86,18 @@ pub fn parse_unicode_locale_id(locale: &str) -> Result<UnicodeLocaleIdentifier, 
 
 #[test]
 fn success_parse_unicode_locale_id() {
+    // basic
+    let locale = parse_unicode_locale_id("en-US-u-hc-h12").unwrap();
+    assert_eq!("en", locale.language.language);
+    assert_eq!(None, locale.language.script);
+    assert_eq!(Some("US".to_string()), locale.language.region);
+    assert_eq!(None, locale.language.variants);
+    let u = locale.extensions.unicode_locale.unwrap();
+    assert_eq!(
+        &vec!["h12".to_string()],
+        u.get(0).unwrap().ufield.get("hc").unwrap()
+    );
+
     // full case
     let locale = parse_unicode_locale_id("ja-Latn-JP-macos-U-attr1-kz-value2-t-en-Latn-US-linux-t1-value1-value2-a-vue-rust-x-foo-123")
             .unwrap();
