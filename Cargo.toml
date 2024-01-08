@@ -1,5 +1,5 @@
 [package]
-name = "unicode-locale-id-parser"
+name = "intl-locale"
 version = "0.1.0"
 edition = "2021"
 

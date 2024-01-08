@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use unicode_locale_id_parser::parse_unicode_language_id;
+use intl_locale::parse_unicode_language_id;
 
 fn language_identifier_parser_bench(c: &mut Criterion) {
     let strings = [

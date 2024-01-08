@@ -1,7 +1,6 @@
-# unicode-locale-id-parser
+# intl-locale
 
 This crate for [Unicode Locale Identifiers](https://unicode.org/reports/tr35/#Unicode_locale_identifier) parser.
-
 
 ## ©️ License
 
