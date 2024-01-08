@@ -25,7 +25,7 @@
 
 - It's OK to have multiple small commits as you work on the PR - we will let GitHub automatically squash it before merging.
 
-- Make sure `cargo test` passes. (see [development setup](#development-setup))
+- Make sure `cargo test` passes.
 
 - If adding new feature:
 
