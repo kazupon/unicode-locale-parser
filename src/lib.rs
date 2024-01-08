@@ -19,12 +19,6 @@
 //! println!("{:#?}", locale);
 //! # }
 //! ```
-//!
-//! ## 🤝 API
-//! - [`parse_locale_id`]: parse [`unicode_locale_id`](https://unicode.org/reports/tr35/#unicode_locale_id)
-//! - [`parse_language_id`]: parse [`unicode_language_id`](https://unicode.org/reports/tr35/#unicode_language_id)
-//! - [`parse_subdivision_id`]: parse [`unicode_subdivision_id`](https://unicode.org/reports/tr35/#unicode_subdivision_id)
-//! - [`parse_measure_unit`]: parse [`unicode_measure_unit`](https://unicode.org/reports/tr35/#unicode_measure_unit)
 mod constants;
 mod extensions;
 mod shared;
