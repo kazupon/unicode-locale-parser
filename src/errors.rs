@@ -1,14 +1,20 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter, Result};
 
-#[warn(missing_docs)]
+/// Enum representing the possible errors that can occur when parsing [Unicode UTS #35 Language and Locale Identifiers](https://unicode.org/reports/tr35/#Identifiers).
 #[derive(Debug, PartialEq)]
 pub enum ParserError {
+    /// A missing identifier error.
     Missing,
+    /// An invalid language identifier error.
     InvalidLanguage,
+    /// An invalid subtag error.
     InvalidSubtag,
+    /// An invalid unicode extensions error.
     InvalidExtension,
+    /// An invalid unicode subdivision error.
     InvalidSubdivision,
+    /// An unexpected error.
     Unexpected,
 }
 
