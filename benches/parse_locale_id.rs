@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use intl_locale::parse_unicode_locale_id;
+use unicode_locale_parser::parse_locale_id;
 
 fn locale_identifier_parser_bench(c: &mut Criterion) {
     let strings = [
@@ -31,7 +31,7 @@ fn locale_identifier_parser_bench(c: &mut Criterion) {
         |b| {
             b.iter(|| {
                 for s in strings {
-                    let _ = parse_unicode_locale_id(black_box(s));
+                    let _ = parse_locale_id(black_box(s));
                 }
             })
         },

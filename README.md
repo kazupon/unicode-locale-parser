@@ -1,4 +1,4 @@
-# intl-locale
+# unicode-locale-parser
 
 This crate for [Unicode Locale Identifiers](https://unicode.org/reports/tr35/#Unicode_locale_identifier) parser.
 
