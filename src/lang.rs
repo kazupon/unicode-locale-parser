@@ -15,13 +15,37 @@ pub struct UnicodeLanguageIdentifier {
     pub variants: Option<Vec<String>>,
 }
 
-pub fn parse_unicode_language_id(chunk: &str) -> Result<UnicodeLanguageIdentifier, ParserError> {
+/// Parse the given string as a Unicode Language Identifier.
+///
+/// This function parses according to [`unicode_language_id` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_language_id).
+///
+/// # Examples
+///
+/// ```
+/// use unicode_locale_parser::parse_language_id;
+///
+/// let res = parse_language_id("en-US").unwrap();
+/// assert_eq!("en", res.language);
+/// assert_eq!(None, res.script);
+/// assert_eq!(Some("US".to_string()), res.region);
+/// assert_eq!(None, res.variants);
+/// ```
+///
+/// # Errors
+///
+/// This function returns an error in the following cases:
+///
+/// - [`ParserError::Missing`] if the given language id is empty.
+/// - [`ParserError::InvalidLanguage`] if the given language id is not a valid language identifier.
+/// - [`ParserError::InvalidSubtag`] if the given language id is not a valid subtag.
+///
+pub fn parse_unicode_language_id(lang_id: &str) -> Result<UnicodeLanguageIdentifier, ParserError> {
     // check empty
-    if chunk.is_empty() {
+    if lang_id.is_empty() {
         return Err(ParserError::Missing);
     }
 
-    parse_unicode_language_id_from_iter(&mut split_str(chunk).peekable())
+    parse_unicode_language_id_from_iter(&mut split_str(lang_id).peekable())
 }
 
 pub fn parse_unicode_language_id_from_iter<'a>(
