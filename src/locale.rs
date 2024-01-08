@@ -35,7 +35,7 @@ impl FromStr for UnicodeLocaleIdentifier {
     }
 }
 
-/// Parse the given string as a Unicode Locale Identifier.
+/// Parse the given string as an Unicode Locale Identifier.
 ///
 /// This function parses according to [`unicode_locale_id` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_locale_id)
 ///

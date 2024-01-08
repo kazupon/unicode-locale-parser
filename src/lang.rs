@@ -15,7 +15,7 @@ pub struct UnicodeLanguageIdentifier {
     pub variants: Option<Vec<String>>,
 }
 
-/// Parse the given string as a Unicode Language Identifier.
+/// Parse the given string as an Unicode Language Identifier.
 ///
 /// This function parses according to [`unicode_language_id` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_language_id).
 ///

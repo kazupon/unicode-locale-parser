@@ -25,7 +25,7 @@ impl FromStr for UnicodeSubdivisionIdentifier {
     }
 }
 
-/// Parse the given string as a Unicode Subdivision Identifier.
+/// Parse the given string as an Unicode Subdivision Identifier.
 ///
 /// This function parses according to [`unicode_subdivision_id` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_subdivision_id)
 ///

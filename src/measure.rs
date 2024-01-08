@@ -30,12 +30,31 @@ impl FromStr for UnicodeMeasureUnit {
     }
 }
 
-pub fn parse_unicode_measure_unit(chunk: &str) -> Result<UnicodeMeasureUnit, ParserError> {
-    if chunk.is_empty() {
+/// Parse the given string as an Unicode Measure Unit
+///
+/// This function parses according to [`unicode_measure_unit` EBNF defined in UTS #35](https://unicode.org/reports/tr35/#unicode_measure_unit)
+///
+/// # Examples
+///
+/// ```
+/// use unicode_locale_parser::parse_measure_unit;
+///
+/// let measure = parse_measure_unit("area-hectare").unwrap();
+/// assert_eq!(vec!["area", "hectare"], measure.values);
+/// ```
+///
+/// # Errors
+///
+/// This function returns an error in the following cases:
+///
+/// - [`ParserError::Missing`] if the given measure unit is empty.
+/// - [`ParserError::InvalidSubtag`] if the given measure unit is not a valid.
+pub fn parse_unicode_measure_unit(measure_unit: &str) -> Result<UnicodeMeasureUnit, ParserError> {
+    if measure_unit.is_empty() {
         return Err(ParserError::Missing);
     }
 
-    parse_unicode_measure_unit_from_iter(&mut split_str(chunk).peekable())
+    parse_unicode_measure_unit_from_iter(&mut split_str(measure_unit).peekable())
 }
 
 fn parse_unicode_measure_unit_from_iter<'a>(
