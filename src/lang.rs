@@ -221,6 +221,8 @@ fn success_parse_unicode_language_id() {
     assert_eq!(Some("Latn".to_string()), result.script);
     assert_eq!(Some("US".to_string()), result.region);
     assert_eq!(Some(vec!["macos".to_string()]), result.variants);
+    let result: UnicodeLanguageIdentifier = "en-Latn-US".parse().unwrap();
+    assert_eq!("en-Latn-US", format!("{}", result));
 }
 
 #[test]
