@@ -1,5 +1,7 @@
 # unicode-locale-parser
 
+[![CI](https://github.com/kazupon/unicode-locale-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/kazupon/unicode-locale-parser/actions/workflows/ci.yml)
+
 The parser for [Unicode Locale Identifiers](https://unicode.org/reports/tr35/#Unicode_locale_identifier)
 
 
