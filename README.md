@@ -10,7 +10,7 @@ All code implements of [Unicode UTS #35 Language and Locale Identifiers](https:/
 
 ## 🚀 Usages
 
-```rs
+```rust
 use unicode_locale_parser::parse_locale_id;
 
 fn main() {
