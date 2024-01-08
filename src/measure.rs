@@ -15,7 +15,7 @@ impl fmt::Display for UnicodeMeasureUnit {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut messages = vec![];
         for value in &self.values {
-            messages.push(format!("{}", value));
+            messages.push(value.to_string());
         }
         write!(f, "{}", messages.join(&SEP.to_string()))?;
         Ok(())

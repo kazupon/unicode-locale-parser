@@ -34,7 +34,7 @@ impl fmt::Display for TransformedExtensions {
 }
 
 pub fn parse_transformed_extensions<'a>(
-    mut iter: &mut Peekable<impl Iterator<Item = &'a str>>,
+    iter: &mut Peekable<impl Iterator<Item = &'a str>>,
 ) -> Result<TransformedExtensions, ParserError> {
     // transformed_extensions
     // https://unicode.org/reports/tr35/#transformed_extensions
@@ -73,7 +73,7 @@ pub fn parse_transformed_extensions<'a>(
             tvalue.push(subtag.to_string());
             iter.next();
         } else if is_language_subtag(subtag_bytes) {
-            tlang = Some(parse_unicode_language_id_from_iter(&mut iter)?);
+            tlang = Some(parse_unicode_language_id_from_iter(iter)?);
         } else {
             return Err(ParserError::InvalidSubtag);
         }
