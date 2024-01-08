@@ -10,14 +10,14 @@ body:
     id: feature-description
     attributes:
       label: Clear and concise description of the problem
-      description: 'As a developer using unplugin-time-stat. I want [goal / wish] so that [benefit]. If you intend to submit a PR for this issue, tell us in the description. Thanks!'
+      description: "As a developer using unplugin-time-stat. I want [goal / wish] so that [benefit]. If you intend to submit a PR for this issue, tell us in the description. Thanks!"
     validations:
       required: true
   - type: textarea
     id: suggested-solution
     attributes:
       label: Suggested solution
-      description: 'In module [xy] we could provide following implementation...'
+      description: "In module [xy] we could provide following implementation..."
     validations:
       required: true
   - type: textarea
@@ -38,7 +38,7 @@ body:
       options:
         - label: Follow our [Code of Conduct](https://github.com/kazupon/.github/blob/main/CODE_OF_CONDUCT.md)
           required: true
-        - label: Read the [Contributing Guide](https://github.com/kazupon/unplugin-time-stat/blob/main/CONTRIBUTING.md).
+        - label: Read the [Contributing Guide](https://github.com/kazupon/unicode-locale-parser/blob/main/CONTRIBUTING.md).
           required: true
         - label: Check that there isn't already an issue that request the same feature to avoid creating a duplicate.
           required: true
