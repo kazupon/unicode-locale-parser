@@ -1,0 +1,34 @@
+---
+name: CI
+
+env:
+  CI: true
+  CARGO_TERM_COLOR: always
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Build And Test
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v4
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Lint
+        run: cargo clippy --verbose
+
+      - name: Build
+        run: cargo build --verbose
+
+      - name: Test
+        run: cargo test --verbose
