@@ -85,6 +85,7 @@ impl fmt::Display for Extensions {
     }
 }
 
+#[allow(dead_code)]
 pub fn parse_extensions(chunk: &str) -> Result<Extensions, ParserError> {
     // check empty
     if chunk.is_empty() {

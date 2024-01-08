@@ -1,6 +1,6 @@
 use crate::constants::SEP;
 use crate::errors::ParserError;
-use crate::extensions::{self, parse_extensions_from_iter, Extensions};
+use crate::extensions::{parse_extensions_from_iter, Extensions};
 use crate::lang::{parse_unicode_language_id_from_iter, UnicodeLanguageIdentifier};
 use crate::shared::split_str;
 

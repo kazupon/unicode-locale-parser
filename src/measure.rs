@@ -54,7 +54,7 @@ fn parse_unicode_measure_unit_from_iter<'a>(
             return Err(ParserError::InvalidSubtag);
         }
 
-        values.push(String::from(subtag.to_string()));
+        values.push(subtag.to_string());
         iter.next();
     }
 
