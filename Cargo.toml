@@ -3,8 +3,10 @@ name = "unicode-locale-parser"
 version = "0.1.0"
 edition = "2021"
 repository = "https://github.com/kazupon/unicode-locale-parser"
-readme = "README.md"
+authors = ["Kazuya Kawaguchi <kawakazu80@gmail.com>"]
+description = "The parser for Unicode Locale Identifiers"
 license = "MIT"
+readme = "README.md"
 categories = ["internationalization"]
 include = [
   "src/**/*",
