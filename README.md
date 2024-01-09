@@ -1,6 +1,7 @@
 # unicode-locale-parser
 
-[![CI](https://github.com/kazupon/unicode-locale-parser/actions/workflows/ci.yml/badge.svg)](https://github.com/kazupon/unicode-locale-parser/actions/workflows/ci.yml)
+[![CI][ci-src]][ci-href]
+[![crates.io][crate-io-src]][crate-io-href]
 
 The parser for [Unicode Locale Identifiers](https://unicode.org/reports/tr35/#Unicode_locale_identifier)
 
@@ -47,3 +48,10 @@ fn main() {
 ## ©️ License
 
 [MIT](https://opensource.org/licenses/MIT)
+
+<!-- Badges -->
+
+[ci-src]: https://github.com/kazupon/unicode-locale-parser/actions/workflows/ci.yml/badge.svg
+[ci-href]: https://github.com/kazupon/unicode-locale-parser/actions/workflows/ci.yml
+[crate-io-src]: https://img.shields.io/crates/v/unicode-locale-parser.svg
+[crate-io-href]: https://crates.io/crates/unicode-locale-parser
