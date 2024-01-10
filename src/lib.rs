@@ -40,5 +40,5 @@ pub use crate::lang::{parse_unicode_language_id as parse_language_id, UnicodeLan
 pub use crate::locale::{parse_unicode_locale_id as parse_locale_id, UnicodeLocaleIdentifier};
 pub use crate::measure::{parse_unicode_measure_unit as parse_measure_unit, UnicodeMeasureUnit};
 pub use crate::subdivision::{
-    parse_unicode_subdivision_id as parse_subdivision_id, UnicodeSubdivisionIdentifier,
+  parse_unicode_subdivision_id as parse_subdivision_id, UnicodeSubdivisionIdentifier,
 };

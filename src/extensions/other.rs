@@ -6,51 +6,51 @@ use std::iter::Peekable;
 
 #[derive(Debug, PartialEq)]
 pub struct OtherExtensions {
-    pub values: Vec<String>,
-    pub extension: char,
+  pub values: Vec<String>,
+  pub extension: char,
 }
 
 impl fmt::Display for OtherExtensions {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_char(self.extension)?;
-        for value in &self.values {
-            f.write_char(SEP)?;
-            f.write_str(value)?;
-        }
-        Ok(())
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    f.write_char(self.extension)?;
+    for value in &self.values {
+      f.write_char(SEP)?;
+      f.write_str(value)?;
     }
+    Ok(())
+  }
 }
 
 pub fn parse_other_extensions<'a>(
-    iter: &mut Peekable<impl Iterator<Item = &'a str>>,
-    extension: char,
+  iter: &mut Peekable<impl Iterator<Item = &'a str>>,
+  extension: char,
 ) -> Result<OtherExtensions, ParserError> {
-    // other_extensions
-    // https://www.unicode.org/reports/tr35/tr35-71/tr35.html#other_extensions
-    let mut values = vec![];
+  // other_extensions
+  // https://www.unicode.org/reports/tr35/tr35-71/tr35.html#other_extensions
+  let mut values = vec![];
 
-    while let Some(subtag) = iter.peek() {
-        if subtag.len() == 1 {
-            break;
-        } else {
-            values.push(String::from(parse_value(subtag)?));
-            iter.next();
-        }
+  while let Some(subtag) = iter.peek() {
+    if subtag.len() == 1 {
+      break;
+    } else {
+      values.push(String::from(parse_value(subtag)?));
+      iter.next();
     }
+  }
 
-    Ok(OtherExtensions { values, extension })
+  Ok(OtherExtensions { values, extension })
 }
 
 fn is_other_value_subtag(subtag: &[u8]) -> bool {
-    (2..=8).contains(&subtag.len()) && subtag.iter().all(|c| c.is_ascii_alphanumeric())
+  (2..=8).contains(&subtag.len()) && subtag.iter().all(|c| c.is_ascii_alphanumeric())
 }
 
 fn parse_value(subtag: &str) -> Result<&str, ParserError> {
-    if !is_other_value_subtag(subtag.as_bytes()) {
-        Err(ParserError::InvalidSubtag)
-    } else {
-        Ok(subtag)
-    }
+  if !is_other_value_subtag(subtag.as_bytes()) {
+    Err(ParserError::InvalidSubtag)
+  } else {
+    Ok(subtag)
+  }
 }
 
 /**
@@ -62,27 +62,27 @@ use crate::shared::split_str;
 
 #[test]
 fn success_other_extensions() {
-    // full case
-    let mut iter = split_str("abc-123").peekable();
-    assert_eq!(
-        vec!["abc", "123"],
-        parse_other_extensions(&mut iter, 'a').unwrap().values
-    );
+  // full case
+  let mut iter = split_str("abc-123").peekable();
+  assert_eq!(
+    vec!["abc", "123"],
+    parse_other_extensions(&mut iter, 'a').unwrap().values
+  );
 
-    // Display trait implementation
-    let mut iter = split_str("abc-123").peekable();
-    assert_eq!(
-        "b-abc-123",
-        format!("{}", parse_other_extensions(&mut iter, 'b').unwrap())
-    );
+  // Display trait implementation
+  let mut iter = split_str("abc-123").peekable();
+  assert_eq!(
+    "b-abc-123",
+    format!("{}", parse_other_extensions(&mut iter, 'b').unwrap())
+  );
 }
 
 #[test]
 fn fail_pu_extensions() {
-    // invalid subtag
-    let mut iter = split_str("abc-123456789").peekable();
-    assert_eq!(
-        ParserError::InvalidSubtag,
-        parse_other_extensions(&mut iter, '1').unwrap_err()
-    );
+  // invalid subtag
+  let mut iter = split_str("abc-123456789").peekable();
+  assert_eq!(
+    ParserError::InvalidSubtag,
+    parse_other_extensions(&mut iter, '1').unwrap_err()
+  );
 }
