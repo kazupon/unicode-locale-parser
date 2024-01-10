@@ -11,7 +11,7 @@ pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
   // https://unicode.org/reports/tr35/#unicode_language_subtag
 
   // 'root' is a special case
-  if LANG_ROOT.eq(subtag) {
+  if matches!(subtag, LANG_ROOT) {
     return Ok(LANG_EMPTY);
   }
 
@@ -19,7 +19,7 @@ pub fn language_subtag(subtag: &str) -> Result<&str, ParserError> {
     return Err(ParserError::InvalidLanguage);
   }
 
-  if LANG_UND == subtag {
+  if matches!(subtag, LANG_UND) {
     Ok(LANG_EMPTY)
   } else {
     Ok(subtag)
