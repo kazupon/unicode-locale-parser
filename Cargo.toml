@@ -21,6 +21,7 @@ include = [
 [dependencies]
 
 [dev-dependencies]
+cargo-husky = { version = "1.5.0", features = ["precommit-hook"] }
 criterion = "0.5.1"
 
 [[bench]]
